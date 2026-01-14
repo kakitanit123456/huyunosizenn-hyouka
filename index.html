@@ -232,15 +232,25 @@
 <!-- ===== Part2/5 START ===== -->
 const STORAGE_KEY = "rika4_eval_winter_project_v2";
 
-/** ===== Theme ===== */
-const THEME_KEY = STORAGE_KEY + "_theme";
-function applyTheme(theme){
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem(THEME_KEY, theme);
+// ===== Theme (Light/Dark) =====
+const THEME_KEY = "rika4_theme"; // localStorage key
+
+function applyTheme(mode){
+  // mode: "dark" | "light"
+  document.documentElement.dataset.theme = mode;
+  localStorage.setItem(THEME_KEY, mode);
+
+  // ボタン表示も合わせる（あれば）
+  const btn = document.getElementById("btnTheme");
+  if(btn){
+    btn.textContent = (mode === "light") ? "🌙" : "☀️";
+    btn.title = (mode === "light") ? "ダークに切り替え" : "ライトに切り替え";
+  }
 }
+
 function toggleTheme(){
-  const cur = localStorage.getItem(THEME_KEY) || "dark";
-  applyTheme(cur==="dark" ? "light" : "dark");
+  const cur = document.documentElement.dataset.theme || "dark";
+  applyTheme(cur === "dark" ? "light" : "dark");
 }
 
 /** ===== Group sync toggle ===== */
@@ -715,6 +725,10 @@ function init(){
   if(missing.length){
     alert("HTML側に必要なIDが見つかりません：\n" + missing.join(", ") + "\n\n（HTMLのid名がJSと一致しているか確認してね）");
     console.error("Missing IDs:", missing);
+    // 既存の init() の中に追加
+  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  const btnTheme = document.getElementById("btnTheme");
+  if(btnTheme) btnTheme.onclick = toggleTheme;
     return;
   }
 
