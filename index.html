@@ -708,22 +708,67 @@ const tabs = [
 ];
 
 function init(){
-  // theme + group sync
-  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
-  document.getElementById("btnTheme").onclick = toggleTheme;
-  const tgs = document.getElementById("toggleGroupSync");
-  tgs.checked = getGroupSyncEnabled();
-  tgs.onchange = ()=> setGroupSyncEnabled(tgs.checked);
-
-  if(!state.data.students.length){
-    state.data.students = ["（児童1）"];
-    state.data.byStudent["（児童1）"] = emptyRecord();
+  function init(){
+  // 1) DOMの必須要素が存在するかチェック（ここで分かる）
+  const mustIds = ["studentSelect","btnAddStudent","newStudentName","currentName","tabs","panel"];
+  const missing = mustIds.filter(id => !document.getElementById(id));
+  if(missing.length){
+    alert("HTML側に必要なIDが見つかりません：\n" + missing.join(", ") + "\n\n（HTMLのid名がJSと一致しているか確認してね）");
+    console.error("Missing IDs:", missing);
+    return;
   }
+
+  // 2) 初期データを必ず補完（studentsが空でも最低1人作る）
   ensureSettingsShape(state.data.settings);
+  state.data.students = Array.isArray(state.data.students) ? state.data.students : [];
+  state.data.byStudent = state.data.byStudent || {};
+
+  if(state.data.students.length === 0){
+    state.data.students = ["（児童1）"];
+  }
   state.data.students.forEach(n=>{
     if(!state.data.byStudent[n]) state.data.byStudent[n] = emptyRecord();
     migrateStudentRecord(state.data.byStudent[n], state.data.settings);
   });
+
+  // currentStudentも必ずセット
+  state.currentStudent = state.currentStudent && state.data.students.includes(state.currentStudent)
+    ? state.currentStudent
+    : state.data.students[0];
+
+  // 3) UI描画
+  renderStudentSelect();
+  renderTabs();
+  renderPanel();
+  refreshKPIs();
+  bindGlobalButtons();
+
+  // 4) 保存（ここで初期児童が永続化される）
+  saveData();
+
+  // 5) テーマ系は要素があれば後で（無くても落ちない）
+  try{
+    if(typeof applyTheme === "function"){
+      applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+    }
+    const btnTheme = document.getElementById("btnTheme");
+    if(btnTheme && typeof toggleTheme === "function"){
+      btnTheme.onclick = toggleTheme;
+    }
+    const tgs = document.getElementById("toggleGroupSync");
+    if(tgs){
+      tgs.checked = (typeof getGroupSyncEnabled === "function") ? getGroupSyncEnabled() : false;
+      tgs.onchange = ()=> {
+        if(typeof setGroupSyncEnabled === "function"){
+          setGroupSyncEnabled(tgs.checked);
+        }
+      };
+    }
+  }catch(e){
+    console.warn("theme/group init skipped:", e);
+  }
+}
+  
   state.currentStudent = state.data.students[0];
 
   renderStudentSelect();
@@ -825,21 +870,82 @@ function bindGlobalButtons(){
 /** ===== 名簿（追加＋変更） ===== */
 function renderStudentSelect(){
   const sel = document.getElementById("studentSelect");
+  const btnAdd = document.getElementById("btnAddStudent");
+  const inp = document.getElementById("newStudentName");
+  const curName = document.getElementById("currentName");
+
+  // ガード（念のため）
+  if(!sel || !btnAdd || !inp || !curName){
+    console.error("renderStudentSelect: missing elements", {sel, btnAdd, inp, curName});
+    return;
+  }
+
+  // セレクトを描画
   sel.innerHTML = "";
-  state.data.students.forEach((n)=>{
+  state.data.students.forEach(n=>{
     const opt = document.createElement("option");
-    opt.value = n; opt.textContent = n;
+    opt.value = n;
+    opt.textContent = n;
     sel.appendChild(opt);
   });
+
+  // currentStudentが無効なら先頭に
+  if(!state.currentStudent || !state.data.students.includes(state.currentStudent)){
+    state.currentStudent = state.data.students[0];
+  }
   sel.value = state.currentStudent;
-  document.getElementById("currentName").textContent = state.currentStudent;
+  curName.textContent = state.currentStudent;
 
   sel.onchange = ()=>{
     state.currentStudent = sel.value;
-    document.getElementById("currentName").textContent = state.currentStudent;
+    curName.textContent = state.currentStudent;
+    saveData();
     renderPanel();
     refreshKPIs();
   };
+
+  // 追加ボタン：必ず動くように毎回 onclick を設定
+  btnAdd.onclick = ()=>{
+    const name = (inp.value || "").trim();
+    if(!name) return alert("児童名を入力してください。");
+    if(state.data.students.includes(name)) return alert("同名の児童がすでにいます。");
+
+    state.data.students.push(name);
+    state.data.byStudent[name] = emptyRecord();
+    migrateStudentRecord(state.data.byStudent[name], state.data.settings);
+
+    state.currentStudent = name;
+    inp.value = "";
+
+    saveData();
+    renderStudentSelect();
+    renderPanel();
+    refreshKPIs();
+  };
+
+  // Enterで追加
+  inp.onkeydown = (e)=>{
+    if(e.key === "Enter"){
+      e.preventDefault();
+      btnAdd.click();
+    }
+  };
+
+  // 名前変更ボタン（あれば）
+  const btnRename = document.getElementById("btnRenameStudent");
+  if(btnRename){
+    btnRename.onclick = async ()=>{
+      const oldName = state.currentStudent;
+      const newName = prompt(`児童名を変更します。\n現在：${oldName}\n新しい名前：`, oldName);
+      if(newName==null) return;
+      await renameStudent(oldName, newName);
+      saveData();
+      renderStudentSelect();
+      renderPanel();
+      refreshKPIs();
+    };
+  }
+}
 
   document.getElementById("btnAddStudent").onclick = ()=>{
     const name = (document.getElementById("newStudentName").value || "").trim();
