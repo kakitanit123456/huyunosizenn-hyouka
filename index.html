@@ -117,7 +117,17 @@
     .dot.test{background:#fb7185}
     .dot.other{background:#a9b3c2}
     .mini{font-size:11px;color:var(--muted);margin-top:4px}
-
+  /* ===== Force theme button clickable ===== */
+  #btnTheme{
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto;
+  }
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 9990;
+  }
     /* ===== Photos ===== */
     .thumbs{display:flex;gap:10px;flex-wrap:wrap}
     .thumb{width:120px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:color-mix(in srgb, var(--bg) 95%, #fff 5%)}
