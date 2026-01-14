@@ -1147,7 +1147,7 @@ function renderProgressAndDeliverables(rec){
   newIsGroup.appendChild(newIsGroupChk);
   newIsGroup.appendChild(document.createTextNode("グループ枠"));
 
-  const addSessionBtn = document.createElement("button"); addSessionBtn.className="btn primary"; addBtn.textContent="授業枠を追加";
+  const addSessionBtn = document.createElement("button"); addSessionBtn.className="btn primary"; addSessionBtn.textContent="授業枠を追加";
   addSessionBtn.onclick = ()=>{
     const id = (newId.value||"").trim();
     const label = (newLabel.value||"").trim();
