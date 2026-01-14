@@ -23,6 +23,9 @@
       --u-pres: rgba(168,85,247,.14);
       --u-test: rgba(251,113,133,.12);
       --u-other: rgba(255,255,255,.05);
+      /* ===== light theme vars ===== */
+      --bgL:#f6f7fb; --cardL:#ffffff; --card2L:#f0f3f9; --textL:#0f172a; --mutedL:#52627a;
+    -  -lineL:#d7dee9; --chipL:#eef2f7; --btnL:#ffffff;
     }
     *{box-sizing:border-box}
     body{margin:0;background:linear-gradient(180deg,#0b0c10,#0a0b10 40%,#07080d);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
@@ -96,6 +99,37 @@
     .dot.test{background:#fb7185}
     .dot.other{background:#a9b3c2}
     .mini{font-size:11px;color:var(--muted);margin-top:4px}
+        /* ===== theme switch ===== */
+    html[data-theme="light"] body{
+      background:linear-gradient(180deg,var(--bgL),#eef1f7 40%,#e9edf5);
+      color:var(--textL);
+    }
+    html[data-theme="light"] header{background:rgba(246,247,251,.92)}
+    html[data-theme="light"] .card{background:var(--cardL);border-color:var(--lineL)}
+    html[data-theme="light"] .card.soft{background:var(--card2L)}
+    html[data-theme="light"] .sub,
+    html[data-theme="light"] .note,
+    html[data-theme="light"] .small,
+    html[data-theme="light"] .mini,
+    html[data-theme="light"] summary,
+    html[data-theme="light"] .pill,
+    html[data-theme="light"] .k .t,
+    html[data-theme="light"] .sec-title .hint{color:var(--mutedL)}
+    html[data-theme="light"] input,
+    html[data-theme="light"] select,
+    html[data-theme="light"] textarea{
+      background:#ffffff;border-color:var(--lineL);color:var(--textL)
+    }
+    html[data-theme="light"] .btn{background:var(--btnL);border-color:var(--lineL);color:var(--textL)}
+    html[data-theme="light"] .tab{border-color:var(--lineL);color:var(--textL)}
+    html[data-theme="light"] .tab.active{background:var(--chipL);border-color:#c7d2e3}
+    html[data-theme="light"] .ovTable th,
+    html[data-theme="light"] .ovTable td{
+      background:rgba(15,23,42,.03);border-color:var(--lineL)
+    }
+    html[data-theme="light"] .ovTable th,
+    html[data-theme="light"] .ovTable .sticky,
+    html[data-theme="light"] .ovTable .sticky2{background:rgba(255,255,255,.96)}
   </style>
 </head>
 <body>
@@ -109,6 +143,7 @@
       <div class="row">
         <button class="btn" id="btnExport">エクスポート(JSON)</button>
         <button class="btn" id="btnImport">インポート</button>
+        <button class="btn" id="btnTheme">テーマ</button>
         <button class="btn danger" id="btnReset">全データ削除</button>
       </div>
     </div>
@@ -173,7 +208,20 @@
 
 <script>
 const STORAGE_KEY = "rika4_eval_winter_project_v1";
+/** ===== theme (dark/light) ===== */
+const THEME_KEY = "rika4_theme_v1";
 
+function getInitialTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  if(saved==="light" || saved==="dark") return saved;
+  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+}
+function applyTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const btn = document.getElementById("btnTheme");
+  if(btn) btn.textContent = `テーマ：${theme==="light" ? "ライト" : "ダーク"}`;
+}
 const UNITS = [
   {id:"all",  label:"（全て）"},
   {id:"star", label:"冬の星"},
@@ -1417,6 +1465,16 @@ function renderPres(rec){
 }
 
 init();
+  // theme apply + toggle
+let theme = getInitialTheme();
+applyTheme(theme);
+const btnTheme = document.getElementById("btnTheme");
+if(btnTheme){
+  btnTheme.onclick = ()=>{
+    theme = (theme==="light") ? "dark" : "light";
+    applyTheme(theme);
+  };
+}
 </script>
 </body>
 </html>
