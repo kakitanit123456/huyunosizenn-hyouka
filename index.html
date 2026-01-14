@@ -1205,27 +1205,34 @@ ses.appendChild(addRow);
   deliv.appendChild(dTbl);
 
   const addRow2 = document.createElement("div"); addRow2.className="row";
-  const newDid = document.createElement("input"); newDid.placeholder="ID（例：D7）"; newDid.className="w-140";
-  const newDLabel = document.createElement("input"); newDLabel.placeholder="提出物名（例：発表スライド）"; newDLabel.className="grow";
-  const newDUnit = unitSelect("other", ()=>{});
-  const addBtn2 = document.createElement("button"); addBtn2.className="btn primary"; addBtn2.textContent="提出物を追加";
-  addBtn2.onclick = ()=>{
-    const id = (newDid.value||"").trim();
-    const label = (newDLabel.value||"").trim();
-    const unit = newDUnit.value;
-    if(!id || !label) return alert("IDと提出物名を入力してください。");
-    if(state.data.settings.deliverables.some(x=>x.id===id)) return alert("同じIDが既にあります。");
-    state.data.settings.deliverables.push({id, label, unit});
-    state.data.students.forEach(n=>{
-      const r = state.data.byStudent[n];
-      r.deliverables.byId[id] = {submitted:false, date:"", note:""};
-    });
-    newDid.value=""; newDLabel.value="";
-    saveData();
-    renderPanel();
-  };
-  addRow2.appendChild(newDid); addRow2.appendChild(newDLabel); addRow2.appendChild(newDUnit); addRow2.appendChild(addBtn2);
-  deliv.appendChild(addRow2);
+const newDid = document.createElement("input"); newDid.placeholder="ID（例：D7）"; newDid.className="w-140";
+const newDLabel = document.createElement("input"); newDLabel.placeholder="提出物名（例：発表スライド）"; newDLabel.className="grow";
+const newDUnit = unitSelect("other", ()=>{});
+
+const addDeliverableBtn = document.createElement("button");
+addDeliverableBtn.className="btn primary";
+addDeliverableBtn.textContent="提出物を追加";
+addDeliverableBtn.onclick = ()=>{
+  const id = (newDid.value||"").trim();
+  const label = (newDLabel.value||"").trim();
+  const unit = newDUnit.value;
+  if(!id || !label) return alert("IDと提出物名を入力してください。");
+  if(state.data.settings.deliverables.some(x=>x.id===id)) return alert("同じIDが既にあります。");
+  state.data.settings.deliverables.push({id, label, unit});
+  state.data.students.forEach(n=>{
+    const r = state.data.byStudent[n];
+    r.deliverables.byId[id] = {submitted:false, date:"", note:""};
+  });
+  newDid.value=""; newDLabel.value="";
+  saveData();
+  renderPanel();
+};
+
+addRow2.appendChild(newDid);
+addRow2.appendChild(newDLabel);
+addRow2.appendChild(newDUnit);
+addRow2.appendChild(addDeliverableBtn);
+deliv.appendChild(addRow2);
 
   two.appendChild(ses);
   two.appendChild(deliv);
