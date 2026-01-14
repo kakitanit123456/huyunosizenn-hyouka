@@ -1,3 +1,4 @@
+<!-- ===== Part1/5 START ===== -->
 <!doctype html>
 <html lang="ja">
 <head>
@@ -6,31 +7,44 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>4年理科 評価記録ツール（冬プロ）</title>
+
   <style>
     :root{
       --bg:#0b0c10; --card:#12141a; --card2:#161a22; --text:#e8eef7; --muted:#a9b3c2;
       --line:#232a36; --accent:#59a8ff; --good:#4ade80; --bad:#fb7185; --warn:#fbbf24;
       --chip:#1c2330; --btn:#1f2a3a;
-
-      --s-miss: rgba(251,113,133,.18); /* 欠 */
-      --s-todo: rgba(251,191,36,.14);  /* 未 */
-      --s-doing: rgba(89,168,255,.16); /* 途中 */
-      --s-done: rgba(74,222,128,.14);  /* 完了 */
-
+      --s-miss: rgba(251,113,133,.18);
+      --s-todo: rgba(251,191,36,.14);
+      --s-doing: rgba(89,168,255,.16);
+      --s-done: rgba(74,222,128,.14);
       --u-star: rgba(89,168,255,.14);
       --u-bio: rgba(74,222,128,.12);
       --u-water: rgba(251,191,36,.12);
       --u-pres: rgba(168,85,247,.14);
       --u-test: rgba(251,113,133,.12);
       --u-other: rgba(255,255,255,.05);
-
-      /* ===== light theme vars ===== */
-      --bgL:#f6f7fb; --cardL:#ffffff; --card2L:#f0f3f9; --textL:#0f172a; --mutedL:#52627a;
-      --lineL:#d7dee9; --chipL:#eef2f7; --btnL:#ffffff;
     }
+
+    /* ===== Light mode ===== */
+    html[data-theme="light"]{
+      --bg:#f6f7fb; --card:#ffffff; --card2:#ffffff; --text:#0b1220; --muted:#536074;
+      --line:#d7deea; --accent:#1b6dff; --chip:#f0f3f9; --btn:#f6f7fb;
+      --s-miss: rgba(225,29,72,.12);
+      --s-todo: rgba(245,158,11,.14);
+      --s-doing: rgba(29,78,216,.12);
+      --s-done: rgba(16,185,129,.12);
+      --u-star: rgba(29,78,216,.08);
+      --u-bio: rgba(16,185,129,.08);
+      --u-water: rgba(245,158,11,.08);
+      --u-pres: rgba(168,85,247,.08);
+      --u-test: rgba(225,29,72,.07);
+      --u-other: rgba(2,6,23,.04);
+    }
+
     *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#0b0c10,#0a0b10 40%,#07080d);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-    header{position:sticky;top:0;z-index:50;background:rgba(10,11,16,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg) 40%,color-mix(in srgb, var(--bg) 92%, #000 8%));color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    header{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 92%, rgba(0,0,0,.25) 8%);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
     .wrap{max-width:1250px;margin:0 auto;padding:14px 14px 22px}
     .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     h1{font-size:16px;margin:0 0 6px 0;letter-spacing:.02em}
@@ -39,35 +53,38 @@
     .card.soft{background:var(--card2)}
     .grow{flex:1}
     .btn{background:var(--btn);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:12px;font-size:13px;cursor:pointer}
-    .btn:hover{border-color:#2f3a4b}
-    .btn.primary{background:linear-gradient(180deg,#2a63ff,#1f49ff);border-color:#2a63ff}
-    .btn.danger{background:linear-gradient(180deg,#ff3b66,#e11d48);border-color:#ff3b66}
-    input,select,textarea{background:#0e1118;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px;font-size:13px}
+    .btn:hover{border-color:color-mix(in srgb, var(--line) 30%, var(--text) 70%)}
+    .btn.primary{background:linear-gradient(180deg,#2a63ff,#1f49ff);border-color:#2a63ff;color:#fff}
+    .btn.danger{background:linear-gradient(180deg,#ff3b66,#e11d48);border-color:#ff3b66;color:#fff}
+    .btn.ghost{background:transparent}
+    input,select,textarea{background:color-mix(in srgb, var(--bg) 60%, #000 40%);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px;font-size:13px}
+    html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:#fff}
     textarea{min-height:70px;resize:vertical}
     .tabs{display:flex;gap:8px;flex-wrap:wrap}
     .tab{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;font-size:13px}
-    .tab.active{background:var(--chip);border-color:#2d3a50}
+    .tab.active{background:var(--chip);border-color:color-mix(in srgb, var(--line) 50%, var(--text) 50%)}
     .grid{display:grid;gap:12px}
     @media (min-width: 920px){ .grid{grid-template-columns: 340px 1fr} }
     .kpi{display:flex;gap:10px;flex-wrap:wrap}
-    .k{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+    .k{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:color-mix(in srgb, var(--bg) 96%, #fff 4%)}
     .k .t{font-size:12px;color:var(--muted)}
     .k .v{font-size:16px;font-weight:700;margin-top:2px;line-height:1.25}
-    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:color-mix(in srgb, var(--bg) 95%, #fff 5%);border:1px solid var(--line);font-size:12px;color:var(--muted)}
     .sec-title{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:8px}
     .sec-title h2{font-size:14px;margin:0}
     .sec-title .hint{font-size:12px;color:var(--muted)}
-    .chk{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.12)}
+    .chk{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb, var(--bg) 90%, #000 10%)}
+    html[data-theme="light"] .chk{background:#fff}
     .chk input{margin-top:2px}
     .two{display:grid;gap:12px}
     @media (min-width: 760px){ .two{grid-template-columns: 1fr 1fr} }
-    details{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.02)}
+    details{border:1px solid var(--line);border-radius:12px;padding:10px;background:color-mix(in srgb, var(--bg) 97%, #fff 3%)}
     summary{cursor:pointer;color:var(--muted);font-size:12px}
     .note{font-size:12px;color:var(--muted);line-height:1.55}
     .hr{height:1px;background:var(--line);margin:10px 0}
     .small{font-size:12px;color:var(--muted)}
     .table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    .table td{padding:10px 10px;background:rgba(255,255,255,.02);border-top:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
+    .table td{padding:10px 10px;background:color-mix(in srgb, var(--bg) 97%, #fff 3%);border-top:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
     .table td:first-child{border-left:1px solid var(--line);border-radius:12px 0 0 12px}
     .table td:last-child{border-right:1px solid var(--line);border-radius:0 12px 12px 0}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
@@ -77,11 +94,11 @@
 
     .scrollX{overflow:auto;border:1px solid var(--line);border-radius:14px}
     .ovTable{width:max-content; border-collapse:separate; border-spacing:0; min-width:100%}
-    .ovTable th,.ovTable td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 8px;font-size:12px;vertical-align:top;background:rgba(255,255,255,.02)}
-    .ovTable th{position:sticky;top:0;z-index:5;background:rgba(18,20,26,.98);backdrop-filter:blur(8px);font-weight:700}
-    .ovTable .sticky{position:sticky;left:0;z-index:6;background:rgba(18,20,26,.98)}
-    .ovTable .sticky2{position:sticky;left:0;z-index:7;background:rgba(18,20,26,.98);font-weight:800}
-    .cell{border-radius:10px;padding:6px 8px;border:1px solid rgba(255,255,255,.06)}
+    .ovTable th,.ovTable td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 8px;font-size:12px;vertical-align:top;background:color-mix(in srgb, var(--bg) 97%, #fff 3%)}
+    .ovTable th{position:sticky;top:0;z-index:5;background:color-mix(in srgb, var(--card) 92%, rgba(0,0,0,.1) 8%);backdrop-filter:blur(8px);font-weight:700}
+    .ovTable .sticky{position:sticky;left:0;z-index:6;background:color-mix(in srgb, var(--card) 92%, rgba(0,0,0,.1) 8%)}
+    .ovTable .sticky2{position:sticky;left:0;z-index:7;background:color-mix(in srgb, var(--card) 92%, rgba(0,0,0,.1) 8%);font-weight:800}
+    .cell{border-radius:10px;padding:6px 8px;border:1px solid color-mix(in srgb, var(--line) 60%, #fff 40%)}
     .st-未{background:var(--s-todo)}
     .st-途中{background:var(--s-doing)}
     .st-完了{background:var(--s-done)}
@@ -101,74 +118,36 @@
     .dot.other{background:#a9b3c2}
     .mini{font-size:11px;color:var(--muted);margin-top:4px}
 
-    /* ===== photo gallery ===== */
-    .gallery{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .thumb{width:150px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.02)}
-    .thumb img{width:100%;height:110px;object-fit:cover;display:block;cursor:pointer}
-    .thumb .cap{padding:8px;font-size:11px;color:var(--muted);line-height:1.35}
-    .thumb .cap b{color:var(--text)}
-    .thumb .actions{display:flex;gap:8px;padding:8px}
-    .thumb .actions .btn{padding:6px 8px;border-radius:10px;font-size:12px}
-    .photoBar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
-    .photoBar .btn{padding:8px 10px}
+    /* ===== Photos ===== */
+    .thumbs{display:flex;gap:10px;flex-wrap:wrap}
+    .thumb{width:120px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:color-mix(in srgb, var(--bg) 95%, #fff 5%)}
+    .thumb img{display:block;width:100%;height:86px;object-fit:cover}
+    .thumb .meta{padding:8px}
+    .thumb .meta .t{font-size:11px;color:var(--muted);line-height:1.2}
+    .thumb .meta .b{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+    .thumb button{padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;font-size:12px}
+    .thumb button:hover{border-color:color-mix(in srgb, var(--line) 30%, var(--text) 70%)}
 
-    /* ===== theme switch ===== */
-    html[data-theme="light"] body{
-      background:linear-gradient(180deg,var(--bgL),#eef1f7 40%,#e9edf5);
-      color:var(--textL);
-    }
-    html[data-theme="light"] header{background:rgba(246,247,251,.92)}
-    html[data-theme="light"] .card{background:var(--cardL);border-color:var(--lineL)}
-    html[data-theme="light"] .card.soft{background:var(--card2L)}
-    html[data-theme="light"] .sub,
-    html[data-theme="light"] .note,
-    html[data-theme="light"] .small,
-    html[data-theme="light"] .mini,
-    html[data-theme="light"] summary,
-    html[data-theme="light"] .pill,
-    html[data-theme="light"] .k .t,
-    html[data-theme="light"] .sec-title .hint{color:var(--mutedL)}
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea{
-      background:#ffffff;border-color:var(--lineL);color:var(--textL)
-    }
-    html[data-theme="light"] .btn{background:var(--btnL);border-color:var(--lineL);color:var(--textL)}
-    html[data-theme="light"] .tab{border-color:var(--lineL);color:var(--textL)}
-    html[data-theme="light"] .tab.active{background:var(--chipL);border-color:#c7d2e3}
-    html[data-theme="light"] .ovTable th,
-    html[data-theme="light"] .ovTable td{
-      background:rgba(15,23,42,.03);border-color:var(--lineL)
-    }
-    html[data-theme="light"] .ovTable th,
-    html[data-theme="light"] .ovTable .sticky,
-    html[data-theme="light"] .ovTable .sticky2{background:rgba(255,255,255,.96)}
-
-    /* ===== iPad 横画面最適化 ===== */
-    @media (min-width: 1024px) and (orientation: landscape){
-      .wrap{max-width:1400px}
-      .grid{grid-template-columns: 380px 1fr}
-      .ovTable th,.ovTable td{font-size:13px}
-      textarea{min-height:80px}
-      h1{font-size:17px}
-    }
     /* ===== iPad landscape optimization ===== */
-@media (orientation: landscape) and (min-width: 900px){
-  .wrap{max-width: 1400px}
-  h1{font-size:18px}
-  .grid{grid-template-columns: 420px 1fr}
-  .tabs{gap:10px}
-  .tab{padding:11px 14px;font-size:14px}
-  .btn{font-size:14px;padding:10px 14px}
-  input,select,textarea{font-size:14px}
-  .table td{padding:12px 12px}
-  .ovTable th,.ovTable td{font-size:13px}
-}
-@media (orientation: landscape) and (min-width: 1100px){
-  .grid{grid-template-columns: 460px 1fr}
-}
+    @media (orientation: landscape) and (min-width: 900px){
+      .wrap{max-width: 1400px}
+      h1{font-size:18px}
+      .grid{grid-template-columns: 420px 1fr}
+      .tabs{gap:10px}
+      .tab{padding:11px 14px;font-size:14px}
+      .btn{font-size:14px;padding:10px 14px}
+      input,select,textarea{font-size:14px}
+      .table td{padding:12px 12px}
+      .ovTable th,.ovTable td{font-size:13px}
+      .thumb{width:140px}
+      .thumb img{height:96px}
+    }
+    @media (orientation: landscape) and (min-width: 1100px){
+      .grid{grid-template-columns: 460px 1fr}
+    }
   </style>
 </head>
+
 <body>
 <header>
   <div class="wrap">
@@ -178,9 +157,13 @@
         <div class="sub">オフライン／端末内保存（localStorage＋写真はIndexedDB）・進捗＆提出物＆評価（提案＋手動調整）</div>
       </div>
       <div class="row">
+        <button class="btn" id="btnTheme">☀️/🌙</button>
+        <span class="pill" title="グループ活動の時間で、同じグループ名の児童へ編集内容を反映します">
+          <input id="toggleGroupSync" type="checkbox" style="transform:scale(1.05)" />
+          グループ同期
+        </span>
         <button class="btn" id="btnExport">エクスポート(JSON)</button>
         <button class="btn" id="btnImport">インポート</button>
-        <button class="btn" id="btnTheme">テーマ</button>
         <button class="btn danger" id="btnReset">全データ削除</button>
       </div>
     </div>
@@ -210,15 +193,6 @@
       <span class="hint">提案評価（参考）</span>
     </div>
 
-    <!-- 児童名の変更（リネーム） -->
-    <div class="row">
-      <input id="renameStudentName" class="grow" placeholder="この児童の名前を変更（例：山田 花子）" />
-      <button class="btn" id="btnRenameStudent">名前変更</button>
-    </div>
-    <div class="note">※名前変更は進捗/評価/提出物に加えて、保存済み写真（IndexedDB）も移行します。</div>
-
-    <div class="hr"></div>
-
     <div class="kpi">
       <div class="k"><div class="t">冬の星</div><div class="v" id="kStar">-</div></div>
       <div class="k"><div class="t">生き物（まとめ）</div><div class="v" id="kBio">-</div></div>
@@ -245,16 +219,6 @@
       点数→5段階：5=A / 4=B+ / 3=B / 2=B- / 1,0=C（提案表示）。<br>
       最終調整は各項目の「最終評価」で上書きできます。
     </div>
-
-    <div class="hr"></div>
-    <div class="sec-title">
-      <h2>グループ同期</h2>
-      <span class="hint">自由進度の管理用</span>
-    </div>
-    <div class="note">
-      進捗の各授業枠に「グループ」を入れると、<b>同じ授業枠 & 同じグループ</b>の児童へ
-      「状態・計画・実績」が自動反映されます（教師メモは同期しません）。
-    </div>
   </div>
 
   <div class="card soft">
@@ -262,23 +226,34 @@
     <div id="panel"></div>
   </div>
 </div>
-<script>
-const STORAGE_KEY = "rika4_eval_winter_project_v1";
 
-/** ===== theme (dark/light) ===== */
-const THEME_KEY = "rika4_theme_v1";
-function getInitialTheme(){
-  const saved = localStorage.getItem(THEME_KEY);
-  if(saved==="light" || saved==="dark") return saved;
-  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
-}
+<script>
+<!-- ===== Part1/5 END ===== -->
+
+<!-- ===== Part2/5 START ===== -->
+const STORAGE_KEY = "rika4_eval_winter_project_v2";
+
+/** ===== Theme ===== */
+const THEME_KEY = STORAGE_KEY + "_theme";
 function applyTheme(theme){
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem(THEME_KEY, theme);
-  const btn = document.getElementById("btnTheme");
-  if(btn) btn.textContent = `テーマ：${theme==="light" ? "ライト" : "ダーク"}`;
+}
+function toggleTheme(){
+  const cur = localStorage.getItem(THEME_KEY) || "dark";
+  applyTheme(cur==="dark" ? "light" : "dark");
 }
 
+/** ===== Group sync toggle ===== */
+const GROUP_SYNC_KEY = STORAGE_KEY + "_group_sync";
+function getGroupSyncEnabled(){
+  return localStorage.getItem(GROUP_SYNC_KEY) === "1";
+}
+function setGroupSyncEnabled(v){
+  localStorage.setItem(GROUP_SYNC_KEY, v ? "1" : "0");
+}
+
+/** ===== Units ===== */
 const UNITS = [
   {id:"all",  label:"（全て）"},
   {id:"star", label:"冬の星"},
@@ -289,22 +264,23 @@ const UNITS = [
   {id:"other",label:"その他"},
 ];
 
+/** ===== Settings ===== */
 const defaultSettings = {
   sessions: [
-    {id:"L1",  label:"第1時（導入・一斉）",   type:"whole", unit:"other"},
-    {id:"L2",  label:"第2時（一斉）",         type:"whole", unit:"other"},
-    {id:"L3",  label:"第3時（自由進度）",     type:"free",  unit:"other"},
-    {id:"L4",  label:"第4時（自由進度）",     type:"free",  unit:"other"},
-    {id:"L5",  label:"第5時（自由進度）",     type:"free",  unit:"other"},
-    {id:"L6",  label:"第6時（一斉）",         type:"whole", unit:"other"},
-    {id:"L7",  label:"第7時（自由進度）",     type:"free",  unit:"other"},
-    {id:"L8",  label:"第8時（自由進度）",     type:"free",  unit:"other"},
-    {id:"L9",  label:"第9時（自由進度）",     type:"free",  unit:"other"},
-    {id:"L10", label:"第10時（自由進度）",    type:"free",  unit:"other"},
-    {id:"L11", label:"第11時（自由進度）",    type:"free",  unit:"other"},
-    {id:"L12", label:"第12時（自由進度/まとめ）", type:"free", unit:"other"},
-    {id:"T1",  label:"テスト①",              type:"test",  unit:"test"},
-    {id:"T2",  label:"テスト②",              type:"test",  unit:"test"},
+    {id:"L1",  label:"第1時（導入・一斉）",   type:"whole", unit:"other", isGroup:false},
+    {id:"L2",  label:"第2時（一斉）",         type:"whole", unit:"other", isGroup:false},
+    {id:"L3",  label:"第3時（自由進度）",     type:"free",  unit:"other", isGroup:false},
+    {id:"L4",  label:"第4時（自由進度）",     type:"free",  unit:"other", isGroup:false},
+    {id:"L5",  label:"第5時（自由進度）",     type:"free",  unit:"other", isGroup:false},
+    {id:"L6",  label:"第6時（一斉）",         type:"whole", unit:"other", isGroup:false},
+    {id:"L7",  label:"第7時（自由進度）",     type:"free",  unit:"other", isGroup:true},
+    {id:"L8",  label:"第8時（自由進度）",     type:"free",  unit:"other", isGroup:true},
+    {id:"L9",  label:"第9時（自由進度）",     type:"free",  unit:"other", isGroup:true},
+    {id:"L10", label:"第10時（自由進度）",    type:"free",  unit:"other", isGroup:true},
+    {id:"L11", label:"第11時（自由進度）",    type:"free",  unit:"other", isGroup:true},
+    {id:"L12", label:"第12時（自由進度/まとめ）", type:"free", unit:"other", isGroup:true},
+    {id:"T1",  label:"テスト①",              type:"test",  unit:"test",  isGroup:false},
+    {id:"T2",  label:"テスト②",              type:"test",  unit:"test",  isGroup:false},
   ],
   deliverables: [
     {id:"D1", label:"冬の星：観察カード", unit:"star"},
@@ -322,6 +298,120 @@ const defaultData = {
   settings: structuredClone(defaultSettings)
 };
 
+/** ===== Photos (IndexedDB) ===== */
+const PHOTO_DB = { name: STORAGE_KEY + "_photos", version: 1, store: "photos" };
+
+function openPhotoDB(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(PHOTO_DB.name, PHOTO_DB.version);
+    req.onupgradeneeded = ()=>{
+      const db = req.result;
+      if(!db.objectStoreNames.contains(PHOTO_DB.store)){
+        const st = db.createObjectStore(PHOTO_DB.store, {keyPath:"id"});
+        st.createIndex("by_student", ["student","createdAt"]);
+        st.createIndex("by_session", ["sessionId","createdAt"]);
+      }
+    };
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+function fileToBlob(file){
+  return new Promise((resolve, reject)=>{
+    const r = new FileReader();
+    r.onload = ()=> resolve(new Blob([r.result], {type:file.type || "image/jpeg"}));
+    r.onerror = ()=> reject(r.error);
+    r.readAsArrayBuffer(file);
+  });
+}
+
+async function addPhoto({student, sessionId, note, file}){
+  const blob = await fileToBlob(file);
+  const db = await openPhotoDB();
+  const id = "p_" + crypto.randomUUID();
+  const createdAt = Date.now();
+  const rec = {id, student, sessionId: sessionId||"", note: note||"", createdAt, mime: blob.type, blob};
+
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(PHOTO_DB.store, "readwrite");
+    tx.objectStore(PHOTO_DB.store).put(rec);
+    tx.oncomplete = ()=>{ db.close(); resolve(rec); };
+    tx.onerror = ()=>{ db.close(); reject(tx.error); };
+    tx.onabort = ()=>{ db.close(); reject(tx.error); };
+  });
+}
+
+async function listPhotosByStudent(student, limit=60){
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(PHOTO_DB.store, "readonly");
+    const st = tx.objectStore(PHOTO_DB.store);
+    const idx = st.index("by_student");
+    const range = IDBKeyRange.bound([student, 0],[student, Number.MAX_SAFE_INTEGER]);
+    const req = idx.getAll(range);
+    req.onsuccess = ()=>{
+      const items = (req.result || []).sort((a,b)=> b.createdAt - a.createdAt).slice(0, limit);
+      resolve(items);
+    };
+    req.onerror = ()=> reject(req.error);
+    tx.oncomplete = ()=> db.close();
+  });
+}
+
+async function deletePhoto(photoId){
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(PHOTO_DB.store, "readwrite");
+    tx.objectStore(PHOTO_DB.store).delete(photoId);
+    tx.oncomplete = ()=>{ db.close(); resolve(true); };
+    tx.onerror = ()=>{ db.close(); reject(tx.error); };
+  });
+}
+
+/** ===== helpers ===== */
+const gradeFromScore = (s)=>{
+  if(s>=5) return "A";
+  if(s===4) return "B+";
+  if(s===3) return "B";
+  if(s===2) return "B-";
+  return "C";
+};
+const clamp5 = (n)=> Math.max(0, Math.min(5, n|0));
+function sumChecks(obj){ return Object.values(obj).filter(Boolean).length; }
+function setDeep(obj, path, value){
+  const parts = path.split(".");
+  let cur = obj;
+  for(let i=0;i<parts.length-1;i++){ cur = cur[parts[i]]; }
+  cur[parts[parts.length-1]] = value;
+}
+function unitClass(unitId){
+  return unitId==="star"?"u-star":
+         unitId==="bio"?"u-bio":
+         unitId==="water"?"u-water":
+         unitId==="pres"?"u-pres":
+         unitId==="test"?"u-test":"u-other";
+}
+function unitDotClass(unitId){
+  return unitId==="star"?"star":
+         unitId==="bio"?"bio":
+         unitId==="water"?"water":
+         unitId==="pres"?"pres":
+         unitId==="test"?"test":"other";
+}
+function unitLabel(unitId){
+  return (UNITS.find(u=>u.id===unitId)?.label) || "その他";
+}
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+/** ===== student records ===== */
 function emptyRecord(){
   return {
     progress: { bySession: {} },
@@ -342,36 +432,21 @@ function emptyRecord(){
       attitude: { checks:{c1:false,c2:false,c3:false,c4:false,c5:false}, suggest:"", final:"" }
     },
     water: {
-      evap: {
-        ksA:{c1:false,c2:false,c3:false,c4:false,c5:false},
-        ksB:{c1:false,c2:false,c3:false,c4:false,c5:false},
-        th:{ score:0 }
-      },
-      cond: {
-        ksA:{c1:false,c2:false,c3:false,c4:false,c5:false},
-        ksB:{c1:false,c2:false,c3:false,c4:false,c5:false},
-        th:{ score:0 }
-      },
-      attitude: {
-        checks:{c1:false,c2:false,c3:false,c4:false,c5:false},
-        severe:false,
-        suggest:"", final:""
-      }
+      evap: { ksA:{c1:false,c2:false,c3:false,c4:false,c5:false}, ksB:{c1:false,c2:false,c3:false,c4:false,c5:false}, th:{ score:0 } },
+      cond: { ksA:{c1:false,c2:false,c3:false,c4:false,c5:false}, ksB:{c1:false,c2:false,c3:false,c4:false,c5:false}, th:{ score:0 } },
+      attitude: { checks:{c1:false,c2:false,c3:false,c4:false,c5:false}, severe:false, suggest:"", final:"" }
     },
-    pres: {
-      attitude: {
-        checks:{c1:false,c2:false,c3:false,c4:false,c5:false},
-        severe:false,
-        suggest:"", final:""
-      }
-    }
-  }
+    pres: { attitude: { checks:{c1:false,c2:false,c3:false,c4:false,c5:false}, severe:false, suggest:"", final:"" } }
+  };
 }
 
 function ensureSettingsShape(settings){
   settings.sessions = settings.sessions || structuredClone(defaultSettings.sessions);
   settings.deliverables = settings.deliverables || structuredClone(defaultSettings.deliverables);
-  settings.sessions.forEach(s=>{ if(!s.unit) s.unit = (s.type==="test" ? "test" : "other"); });
+  settings.sessions.forEach(s=>{
+    if(!s.unit) s.unit = (s.type==="test" ? "test" : "other");
+    if(s.isGroup == null) s.isGroup = false;
+  });
   settings.deliverables.forEach(d=>{ if(!d.unit) d.unit = "other"; });
 }
 
@@ -433,54 +508,75 @@ function loadData(){
 }
 function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data)); }
 
-const state = {
-  data: loadData(),
-  currentStudent: null,
-  currentTab: "progress",
-  overviewFilterUnit: "all"
-};
+/** ===== CSV ===== */
+function csvEscape(value){
+  const s = String(value ?? "");
+  if(/[,"\n\r]/.test(s)) return `"${s.replaceAll('"','""')}"`;
+  return s;
+}
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function exportProgressCSV(filterUnit="all"){
+  const sessions = state.data.settings.sessions.filter(s=> filterUnit==="all" ? true : (s.unit===filterUnit));
+  const header = ["児童"];
+  sessions.forEach(s=>{
+    header.push(`${s.id} 状態`, `${s.id} グループ`, `${s.id} 計画`, `${s.id} 実績`, `${s.id} 教師メモ`);
+  });
+  const rows = [header];
+  state.data.students.forEach(st=>{
+    const r = state.data.byStudent[st];
+    const row = [st];
+    sessions.forEach(s=>{
+      const v = r.progress.bySession[s.id] || {status:"未",group:"",plan:"",done:"",note:""};
+      row.push(v.status||"", v.group||"", v.plan||"", v.done||"", v.note||"");
+    });
+    rows.push(row);
+  });
+  const csv = rows.map(r=> r.map(csvEscape).join(",")).join("\n");
+  downloadText(`rika4_progress_${filterUnit}.csv`, csv);
+}
+function exportDeliverablesCSV(filterUnit="all"){
+  const dels = state.data.settings.deliverables.filter(d=> filterUnit==="all" ? true : (d.unit===filterUnit));
+  const header = ["児童"];
+  dels.forEach(d=> header.push(`${d.id} 提出`, `${d.id} 提出日`, `${d.id} メモ`));
+  const rows = [header];
+  state.data.students.forEach(st=>{
+    const r = state.data.byStudent[st];
+    const row = [st];
+    dels.forEach(d=>{
+      const v = r.deliverables.byId[d.id] || {submitted:false,date:"",note:""};
+      row.push(v.submitted ? "提出" : "未提出", v.date||"", v.note||"");
+    });
+    rows.push(row);
+  });
+  const csv = rows.map(r=> r.map(csvEscape).join(",")).join("\n");
+  downloadText(`rika4_deliverables_${filterUnit}.csv`, csv);
+}
 
-/** ===== helpers ===== */
-const gradeFromScore = (s)=>{
-  if(s>=5) return "A";
-  if(s===4) return "B+";
-  if(s===3) return "B";
-  if(s===2) return "B-";
-  return "C";
-};
-const clamp5 = (n)=> Math.max(0, Math.min(5, n|0));
-function sumChecks(obj){ return Object.values(obj).filter(Boolean).length; }
-function setDeep(obj, path, value){
-  const parts = path.split(".");
-  let cur = obj;
-  for(let i=0;i<parts.length-1;i++){ cur = cur[parts[i]]; }
-  cur[parts[parts.length-1]] = value;
+/** ===== Group sync core ===== */
+function shouldSyncGroup(sessionId){
+  if(!getGroupSyncEnabled()) return false;
+  const s = state.data.settings.sessions.find(x=>x.id===sessionId);
+  return !!s?.isGroup;
 }
-function unitClass(unitId){
-  return unitId==="star"?"u-star":
-         unitId==="bio"?"u-bio":
-         unitId==="water"?"u-water":
-         unitId==="pres"?"u-pres":
-         unitId==="test"?"u-test":"u-other";
+function syncToSameGroup(sessionId, groupName, patchFn){
+  if(!groupName) return;
+  state.data.students.forEach(st=>{
+    if(st===state.currentStudent) return;
+    const r = state.data.byStudent[st];
+    if((r.progress.bySession[sessionId]?.group||"") === groupName){
+      patchFn(r.progress.bySession[sessionId]);
+    }
+  });
 }
-function unitDotClass(unitId){
-  return unitId==="star"?"star":
-         unitId==="bio"?"bio":
-         unitId==="water"?"water":
-         unitId==="pres"?"pres":
-         unitId==="test"?"test":"other";
-}
-function unitLabel(unitId){
-  return (UNITS.find(u=>u.id===unitId)?.label) || "その他";
-}
-function escapeHtml(s){
-  return String(s)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#39;");
-}
+
 /** ===== student rename (with photo DB migration) ===== */
 async function renamePhotosStudent(oldName, newName){
   const db = await openPhotoDB();
@@ -490,15 +586,10 @@ async function renamePhotosStudent(oldName, newName){
     const idx = st.index("by_student");
     const range = IDBKeyRange.bound([oldName, 0],[oldName, Number.MAX_SAFE_INTEGER]);
     const req = idx.getAll(range);
-
     req.onsuccess = ()=>{
-      const items = req.result || [];
-      items.forEach(p=>{
-        st.put({...p, student:newName});
-      });
+      (req.result||[]).forEach(p=> st.put({...p, student:newName}));
     };
     req.onerror = ()=> reject(req.error);
-
     tx.oncomplete = ()=>{ db.close(); resolve(true); };
     tx.onerror = ()=>{ db.close(); reject(tx.error); };
     tx.onabort = ()=>{ db.close(); reject(tx.error); };
@@ -519,101 +610,286 @@ async function renameStudent(oldName, newName){
 
   if(state.currentStudent === oldName) state.currentStudent = newName;
 
-  try{
-    if(typeof openPhotoDB === "function") await renamePhotosStudent(oldName, newName);
-  }catch(e){
-    alert("※児童名は変更できましたが、写真の移行でエラーが出ました：" + e.message);
-  }
+  try{ await renamePhotosStudent(oldName, newName); }
+  catch(e){ alert("※児童名は変更できましたが、写真の移行でエラー：" + e.message); }
 
   saveData();
   renderStudentSelect();
   renderPanel();
   refreshKPIs();
 }
-/** ===== Photos (IndexedDB) ===== */
-const PHOTO_DB = { name:"rika4_photos_db_v1", store:"photos", version:1 };
 
-function openPhotoDB(){
-  return new Promise((resolve, reject)=>{
-    const req = indexedDB.open(PHOTO_DB.name, PHOTO_DB.version);
-    req.onupgradeneeded = ()=>{
-      const db = req.result;
-      if(!db.objectStoreNames.contains(PHOTO_DB.store)){
-        const st = db.createObjectStore(PHOTO_DB.store, {keyPath:"id"});
-        st.createIndex("by_student_session", ["student","sessionId","ts"]);
-        st.createIndex("by_student", ["student","ts"]);
-      }
+/** ===== state ===== */
+const state = {
+  data: loadData(),
+  currentStudent: null,
+  currentTab: "progress",
+  overviewFilterUnit: "all"
+};
+<!-- ===== Part2/5 END ===== -->
+<!-- ===== Part3/5 START ===== -->
+/** ===== suggestions ===== */
+function computeStarSuggest(rec){
+  const ksA_checks = ["c1","c2","c3","c4"].reduce((a,k)=>a+(rec.star.ksA[k]?1:0),0);
+  const bonus = (rec.star.ksA.obsCount==="4+") ? 1 : 0;
+  const ksA = Math.min(5, ksA_checks + bonus);
+  const ksB = sumChecks(rec.star.ksB);
+  const thA = clamp5(rec.star.thA.score);
+  const thB = clamp5(rec.star.thB.score);
+  return { ksA:{score:ksA, grade:gradeFromScore(ksA)}, ksB:{score:ksB, grade:gradeFromScore(ksB)},
+           thA:{score:thA, grade:gradeFromScore(thA)}, thB:{score:thB, grade:gradeFromScore(thB)},
+           attitude:{grade: rec.star.attitude.final || rec.star.attitude.suggest || ""} };
+}
+function computeBioSuggest(rec){
+  const ksA_checks = ["c1","c2","c3","c4"].reduce((a,k)=>a+(rec.bio.ksA[k]?1:0),0);
+  const bonus = (parseInt(rec.bio.ksA.seasonCount,10) >= 3) ? 1 : 0;
+  const ksA = Math.min(5, ksA_checks + bonus);
+  const ksB = sumChecks(rec.bio.ksB);
+
+  const rawA = clamp5(rec.bio.thA.score);
+  const rawB = clamp5(rec.bio.thB.score);
+  const advA = !!rec.bio.thA.multiUsed;
+  const advB = !!rec.bio.thB.multiUsed;
+
+  let thA_score = rawA;
+  let thB_score = rawB;
+
+  if(advA) thA_score = Math.min(5, thA_score + 1);
+  if(advB) thB_score = Math.min(5, thB_score + 1);
+
+  // 2種類以上で考察→C無し（最低2点）
+  if(advA && thA_score <= 1) thA_score = 2;
+  if(advB && thB_score <= 1) thB_score = 2;
+
+  const attChecks = sumChecks(rec.bio.attitude.checks);
+  let attGrade = gradeFromScore(Math.min(5, attChecks));
+  // 思考で加点した場合、主体は最低B以上
+  if(advA || advB){
+    if(attGrade === "C" || attGrade === "B-") attGrade = "B";
+  }
+  rec.bio.attitude.suggest = attGrade;
+
+  return { ksA:{score:ksA, grade:gradeFromScore(ksA)}, ksB:{score:ksB, grade:gradeFromScore(ksB)},
+           thA:{score:thA_score, grade:gradeFromScore(thA_score), adv:advA},
+           thB:{score:thB_score, grade:gradeFromScore(thB_score), adv:advB},
+           attitude:{grade: rec.bio.attitude.final || rec.bio.attitude.suggest || ""} };
+}
+function computeWaterSuggest(rec){
+  const e_ksA = sumChecks(rec.water.evap.ksA);
+  const e_ksB = sumChecks(rec.water.evap.ksB);
+  const e_th  = clamp5(rec.water.evap.th.score);
+
+  const c_ksA = sumChecks(rec.water.cond.ksA);
+  const c_ksB = sumChecks(rec.water.cond.ksB);
+  const c_th  = clamp5(rec.water.cond.th.score);
+
+  let attGrade = gradeFromScore(sumChecks(rec.water.attitude.checks));
+  if(rec.water.attitude.severe) attGrade = "C";
+  rec.water.attitude.suggest = attGrade;
+
+  return { evap:{ ksA:{score:e_ksA, grade:gradeFromScore(e_ksA)}, ksB:{score:e_ksB, grade:gradeFromScore(e_ksB)}, th:{score:e_th, grade:gradeFromScore(e_th)} },
+           cond:{ ksA:{score:c_ksA, grade:gradeFromScore(c_ksA)}, ksB:{score:c_ksB, grade:gradeFromScore(c_ksB)}, th:{score:c_th, grade:gradeFromScore(c_th)} },
+           attitude:{grade: rec.water.attitude.final || rec.water.attitude.suggest || ""} };
+}
+function computePresSuggest(rec){
+  let attGrade = gradeFromScore(sumChecks(rec.pres.attitude.checks));
+  if(rec.pres.attitude.severe) attGrade = "C";
+  rec.pres.attitude.suggest = attGrade;
+  return { attitude:{grade: rec.pres.attitude.final || rec.pres.attitude.suggest || ""} };
+}
+
+/** ===== UI core ===== */
+const tabs = [
+  {id:"progress", label:"進捗・提出物（個人）"},
+  {id:"overview", label:"一覧（クラス）"},
+  {id:"star", label:"冬の星"},
+  {id:"bio", label:"生き物（まとめ）"},
+  {id:"water", label:"水のゆくえ"},
+  {id:"pres", label:"発表（主体）"},
+];
+
+function init(){
+  // theme + group sync
+  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  document.getElementById("btnTheme").onclick = toggleTheme;
+  const tgs = document.getElementById("toggleGroupSync");
+  tgs.checked = getGroupSyncEnabled();
+  tgs.onchange = ()=> setGroupSyncEnabled(tgs.checked);
+
+  if(!state.data.students.length){
+    state.data.students = ["（児童1）"];
+    state.data.byStudent["（児童1）"] = emptyRecord();
+  }
+  ensureSettingsShape(state.data.settings);
+  state.data.students.forEach(n=>{
+    if(!state.data.byStudent[n]) state.data.byStudent[n] = emptyRecord();
+    migrateStudentRecord(state.data.byStudent[n], state.data.settings);
+  });
+  state.currentStudent = state.data.students[0];
+
+  renderStudentSelect();
+  renderTabs();
+  renderPanel();
+  refreshKPIs();
+  bindGlobalButtons();
+}
+
+function renderTabs(){
+  const el = document.getElementById("tabs");
+  el.innerHTML = "";
+  tabs.forEach(t=>{
+    const b = document.createElement("button");
+    b.className = "tab" + (state.currentTab===t.id ? " active":"");
+    b.textContent = t.label;
+    b.onclick = ()=>{
+      state.currentTab = t.id;
+      renderTabs();
+      renderPanel();
     };
-    req.onsuccess = ()=> resolve(req.result);
-    req.onerror = ()=> reject(req.error);
-  });
-}
-function dbTx(db, mode="readonly"){
-  return db.transaction(PHOTO_DB.store, mode).objectStore(PHOTO_DB.store);
-}
-
-async function addPhoto({student, sessionId, dataUrl, memo=""}){
-  const db = await openPhotoDB();
-  return new Promise((resolve, reject)=>{
-    const st = dbTx(db, "readwrite");
-    const ts = Date.now();
-    const id = `${student}__${sessionId}__${ts}__${Math.random().toString(16).slice(2)}`;
-    const rec = {id, student, sessionId, ts, dataUrl, memo};
-    const req = st.add(rec);
-    req.onsuccess = ()=>{ db.close(); resolve(rec); };
-    req.onerror = ()=>{ db.close(); reject(req.error); };
-  });
-}
-async function listPhotos(student, sessionId){
-  const db = await openPhotoDB();
-  return new Promise((resolve, reject)=>{
-    const st = dbTx(db, "readonly");
-    const idx = st.index("by_student_session");
-    const range = IDBKeyRange.bound([student, sessionId, 0],[student, sessionId, Number.MAX_SAFE_INTEGER]);
-    const req = idx.getAll(range);
-    req.onsuccess = ()=>{ db.close(); resolve((req.result||[]).sort((a,b)=>b.ts-a.ts)); };
-    req.onerror = ()=>{ db.close(); reject(req.error); };
-  });
-}
-async function deletePhoto(id){
-  const db = await openPhotoDB();
-  return new Promise((resolve, reject)=>{
-    const st = dbTx(db, "readwrite");
-    const req = st.delete(id);
-    req.onsuccess = ()=>{ db.close(); resolve(true); };
-    req.onerror = ()=>{ db.close(); reject(req.error); };
+    el.appendChild(b);
   });
 }
 
-/** 画像を縮小して dataURL化（長辺 maxSide px、JPEG品質 quality） */
-async function fileToResizedDataURL(file, maxSide=1400, quality=0.82){
-  const dataUrl = await new Promise((resolve, reject)=>{
-    const fr = new FileReader();
-    fr.onload = ()=> resolve(String(fr.result||""));
-    fr.onerror = ()=> reject(fr.error);
-    fr.readAsDataURL(file);
-  });
+function refreshKPIs(){
+  const rec = state.data.byStudent[state.currentStudent];
+  const sStar = computeStarSuggest(rec);
+  const sBio = computeBioSuggest(rec);
+  const sWater = computeWaterSuggest(rec);
+  const sPres = computePresSuggest(rec);
 
-  const img = await new Promise((resolve, reject)=>{
-    const i = new Image();
-    i.onload = ()=> resolve(i);
-    i.onerror = reject;
-    i.src = dataUrl;
-  });
+  document.getElementById("kStar").textContent =
+    `知A:${(rec.star.ksA.obsCount==="4+"? "★":"")}${sStar.ksA.grade} / 知B:${sStar.ksB.grade} / 思A:${sStar.thA.grade} / 思B:${sStar.thB.grade}`;
 
-  let {width:w, height:h} = img;
-  const scale = Math.min(1, maxSide / Math.max(w,h));
-  w = Math.round(w*scale);
-  h = Math.round(h*scale);
+  document.getElementById("kBio").textContent =
+    `知A:${sBio.ksA.grade} / 知B:${sBio.ksB.grade} / 思A:${(sBio.thA.adv?"★":"")}${sBio.thA.grade} / 思B:${(sBio.thB.adv?"★":"")}${sBio.thB.grade} / 主体:${sBio.attitude.grade||"-"}`;
 
-  const canvas = document.createElement("canvas");
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0,0,w,h);
+  document.getElementById("kWater").textContent =
+    `蒸発(知A:${sWater.evap.ksA.grade},知B:${sWater.evap.ksB.grade},思:${sWater.evap.th.grade})・結露(知A:${sWater.cond.ksA.grade},知B:${sWater.cond.ksB.grade},思:${sWater.cond.th.grade})・主体:${sWater.attitude.grade||"-"}`;
 
-  return canvas.toDataURL("image/jpeg", quality);
+  document.getElementById("kPres").textContent = `主体:${sPres.attitude.grade || "-"}`;
+  saveData();
 }
 
+function bindGlobalButtons(){
+  document.getElementById("btnReset").onclick = ()=>{
+    if(!confirm("本当に全データを削除しますか？（元に戻せません）")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    // 画像DBも消したい場合はここで indexedDB.deleteDatabase(PHOTO_DB.name) を呼ぶ
+    location.reload();
+  };
+
+  document.getElementById("btnExport").onclick = ()=>{
+    const blob = new Blob([JSON.stringify(state.data,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "rika4_eval_backup.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  document.getElementById("btnImport").onclick = async ()=>{
+    const inp = document.createElement("input");
+    inp.type="file"; inp.accept="application/json";
+    inp.onchange = ()=>{
+      const f = inp.files?.[0];
+      if(!f) return;
+      const r = new FileReader();
+      r.onload = ()=>{
+        try{
+          const d = JSON.parse(String(r.result||""));
+          if(!d.students || !d.byStudent) throw new Error("形式が違います");
+          d.settings = d.settings || structuredClone(defaultSettings);
+          ensureSettingsShape(d.settings);
+          d.byStudent = d.byStudent || {};
+          d.students.forEach(n=>{
+            if(!d.byStudent[n]) d.byStudent[n]=emptyRecord();
+            migrateStudentRecord(d.byStudent[n], d.settings);
+          });
+          state.data = d;
+          state.currentStudent = state.data.students[0] || "";
+          saveData();
+          renderStudentSelect();
+          renderTabs();
+          renderPanel();
+          refreshKPIs();
+        }catch(e){
+          alert("インポートに失敗しました： " + e.message);
+        }
+      };
+      r.readAsText(f);
+    };
+    inp.click();
+  };
+}
+
+/** ===== 名簿（追加＋変更） ===== */
+function renderStudentSelect(){
+  const sel = document.getElementById("studentSelect");
+  sel.innerHTML = "";
+  state.data.students.forEach((n)=>{
+    const opt = document.createElement("option");
+    opt.value = n; opt.textContent = n;
+    sel.appendChild(opt);
+  });
+  sel.value = state.currentStudent;
+  document.getElementById("currentName").textContent = state.currentStudent;
+
+  sel.onchange = ()=>{
+    state.currentStudent = sel.value;
+    document.getElementById("currentName").textContent = state.currentStudent;
+    renderPanel();
+    refreshKPIs();
+  };
+
+  document.getElementById("btnAddStudent").onclick = ()=>{
+    const name = (document.getElementById("newStudentName").value || "").trim();
+    if(!name) return alert("児童名を入力してください。");
+    if(state.data.students.includes(name)) return alert("同名の児童がすでにいます。");
+    state.data.students.push(name);
+    state.data.byStudent[name] = emptyRecord();
+    migrateStudentRecord(state.data.byStudent[name], state.data.settings);
+    state.currentStudent = name;
+    document.getElementById("newStudentName").value = "";
+    saveData();
+    renderStudentSelect();
+    renderPanel();
+    refreshKPIs();
+  };
+
+  // ★ 児童名変更
+  const btnRename = document.getElementById("btnRenameStudent");
+  if(btnRename){
+    btnRename.onclick = async ()=>{
+      const oldName = state.currentStudent;
+      const newName = prompt(`児童名を変更します。\n現在：${oldName}\n新しい名前：`, oldName);
+      if(newName==null) return;
+      await renameStudent(oldName, newName);
+    };
+  }
+}
+
+function renderPanel(){
+  const rec = state.data.byStudent[state.currentStudent];
+  const panel = document.getElementById("panel");
+  panel.innerHTML = "";
+
+  if(state.currentTab==="progress"){
+    panel.appendChild(renderProgressAndDeliverables(rec));
+  } else if(state.currentTab==="overview"){
+    panel.appendChild(renderOverview());
+  } else if(state.currentTab==="star"){
+    panel.appendChild(renderStar(rec));
+  } else if(state.currentTab==="bio"){
+    panel.appendChild(renderBio(rec));
+  } else if(state.currentTab==="water"){
+    panel.appendChild(renderWater(rec));
+  } else if(state.currentTab==="pres"){
+    panel.appendChild(renderPres(rec));
+  }
+}
+
+/** ===== UI parts ===== */
 function labelRow(title, right){
   const d = document.createElement("div");
   d.className="sec-title";
@@ -625,254 +901,894 @@ function labelRow(title, right){
   d.appendChild(h); d.appendChild(r);
   return d;
 }
-
-/** 写真UI（遅延読み込み） */
-function buildPhotoUI(student, sessionId){
-  const wrap = document.createElement("div");
-
-  const bar = document.createElement("div");
-  bar.className = "photoBar";
-
-  const btnAdd = document.createElement("button");
-  btnAdd.className = "btn primary";
-  btnAdd.textContent = "写真を追加";
-
-  const btnShow = document.createElement("button");
-  btnShow.className = "btn";
-  btnShow.textContent = "写真を表示（必要時読み込み）";
-
-  const gal = document.createElement("div");
-  gal.className = "gallery";
-
-  async function refreshGallery(){
-    gal.innerHTML = "";
-    const photos = await listPhotos(student, sessionId);
-    if(!photos.length){
-      const n = document.createElement("div");
-      n.className = "note";
-      n.textContent = "（まだ写真はありません）";
-      gal.appendChild(n);
-      return;
-    }
-    photos.forEach(p=>{
-      const t = document.createElement("div");
-      t.className = "thumb";
-
-      const img = document.createElement("img");
-      img.src = p.dataUrl;
-      img.alt = "photo";
-      img.onclick = ()=> window.open(p.dataUrl, "_blank");
-
-      const cap = document.createElement("div");
-      cap.className = "cap";
-      const d = new Date(p.ts);
-      cap.innerHTML = `<b>${d.toLocaleString()}</b><br>${escapeHtml(p.memo||"")}`;
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-
-      const btnMemo = document.createElement("button");
-      btnMemo.className = "btn";
-      btnMemo.textContent = "メモ編集";
-      btnMemo.onclick = async ()=>{
-        const memo = prompt("写真メモ（短く）", p.memo||"");
-        if(memo==null) return;
-        const db = await openPhotoDB();
-        await new Promise((resolve, reject)=>{
-          const st = dbTx(db, "readwrite");
-          const req = st.put({...p, memo});
-          req.onsuccess = ()=>{ db.close(); resolve(true); };
-          req.onerror = ()=>{ db.close(); reject(req.error); };
-        });
-        await refreshGallery();
-      };
-
-      const btnDel = document.createElement("button");
-      btnDel.className = "btn danger";
-      btnDel.textContent = "削除";
-      btnDel.onclick = async ()=>{
-        if(!confirm("この写真を削除しますか？")) return;
-        await deletePhoto(p.id);
-        await refreshGallery();
-      };
-
-      actions.appendChild(btnMemo);
-      actions.appendChild(btnDel);
-
-      t.appendChild(img);
-      t.appendChild(cap);
-      t.appendChild(actions);
-      gal.appendChild(t);
-    });
-  }
-
-  btnShow.onclick = async ()=>{
-    btnShow.disabled = true;
-    btnShow.textContent = "読み込み中…";
-    try{ await refreshGallery(); }
-    finally{
-      btnShow.disabled = false;
-      btnShow.textContent = "写真を再表示";
-    }
+function gradeSelect(value, onChange){
+  const sel = document.createElement("select");
+  ["","A","B+","B","B-","C"].forEach(v=>{
+    const o = document.createElement("option");
+    o.value=v; o.textContent = v==="" ? "（自動）" : v;
+    sel.appendChild(o);
+  });
+  sel.value = value || "";
+  sel.onchange = ()=> onChange(sel.value);
+  return sel;
+}
+function checkItem(path, text, rec){
+  const wrap = document.createElement("label");
+  wrap.className="chk";
+  const input = document.createElement("input");
+  input.type="checkbox";
+  const parts = path.split(".");
+  let cur = rec;
+  for(const p of parts) cur = cur[p];
+  input.checked = !!cur;
+  input.onchange = ()=>{
+    setDeep(rec, path, input.checked);
+    refreshKPIs();
+    renderPanel();
   };
-
-  btnAdd.onclick = ()=>{
-    const inp = document.createElement("input");
-    inp.type = "file";
-    inp.accept = "image/*";
-    inp.capture = "environment";
-    inp.onchange = async ()=>{
-      const f = inp.files?.[0];
-      if(!f) return;
-      btnAdd.disabled = true;
-      btnAdd.textContent = "保存中…";
-      try{
-        const resized = await fileToResizedDataURL(f, 1400, 0.82);
-        const memo = prompt("写真メモ（任意）", "") || "";
-        await addPhoto({student, sessionId, dataUrl: resized, memo});
-        await refreshGallery();
-      }catch(e){
-        alert("写真の保存に失敗しました：" + e.message);
-      }finally{
-        btnAdd.disabled = false;
-        btnAdd.textContent = "写真を追加";
-      }
-    };
-    inp.click();
-  };
-
-  bar.appendChild(btnAdd);
-  bar.appendChild(btnShow);
-
-  wrap.appendChild(bar);
-  wrap.appendChild(gal);
+  const span = document.createElement("div");
+  span.innerHTML = `<div>${text}</div>`;
+  wrap.appendChild(input); wrap.appendChild(span);
   return wrap;
 }
-
-/** 児童名変更時：写真を旧名→新名へ移行 */
-async function migratePhotosForRename(oldName, newName){
-  const db = await openPhotoDB();
-  const photos = await new Promise((resolve, reject)=>{
-    const st = dbTx(db, "readonly");
-    const idx = st.index("by_student");
-    const range = IDBKeyRange.bound([oldName, 0],[oldName, Number.MAX_SAFE_INTEGER]);
-    const req = idx.getAll(range);
-    req.onsuccess = ()=> resolve(req.result||[]);
-    req.onerror = ()=> reject(req.error);
+function numberInput(path, rec, min=0, max=5){
+  const input = document.createElement("input");
+  input.type="number"; input.min=min; input.max=max; input.step="1";
+  const parts = path.split(".");
+  let cur = rec;
+  for(const p of parts) cur = cur[p];
+  input.value = cur ?? 0;
+  input.oninput = ()=>{
+    let v = parseInt(input.value||"0",10);
+    if(Number.isNaN(v)) v=0;
+    v = Math.max(min, Math.min(max, v));
+    setDeep(rec, path, v);
+    refreshKPIs();
+    renderPanel();
+  };
+  return input;
+}
+function unitSelect(value, onChange){
+  const sel = document.createElement("select");
+  UNITS.filter(u=>u.id!=="all").forEach(u=>{
+    const o=document.createElement("option"); o.value=u.id; o.textContent=u.label; sel.appendChild(o);
   });
-  db.close();
+  sel.value = value || "other";
+  sel.onchange = ()=> onChange(sel.value);
+  return sel;
+}
+<!-- ===== Part3/5 END ===== -->
+<!-- ===== Part4/5 START ===== -->
+/** ===== progress/deliverables (個人) + 写真 ===== */
+function renderProgressAndDeliverables(rec){
+  const box = document.createElement("div");
+  box.appendChild(labelRow("進捗確認（授業枠）／提出物リスト（編集可）＋写真記録", ""));
+  const setCard = document.createElement("div");
+  setCard.className="card";
+  const info = document.createElement("div");
+  info.className="note";
+  info.innerHTML = `・授業枠/提出物は編集できます（単元の色分けと一覧のフィルタに使います）。<br>
+  ・授業枠が「グループ」なら、グループ名が同じ児童へ（状態/計画/実績/メモ）を同期できます（上部の「グループ同期」をON）。`;
+  setCard.appendChild(info);
 
-  if(!photos.length) return;
+  const two = document.createElement("div"); two.className="two";
 
-  const db2 = await openPhotoDB();
-  await new Promise((resolve, reject)=>{
-    const st = dbTx(db2, "readwrite");
-    let pending = photos.length * 2;
-    const doneOne = ()=>{
-      pending--;
-      if(pending<=0){ db2.close(); resolve(true); }
-    };
-    const fail = (err)=>{
-      db2.close(); reject(err);
-    };
+  /** sessions editor */
+  const ses = document.createElement("div"); ses.className="card";
+  ses.appendChild(labelRow("授業枠（編集）", `<span class="small">単元（色分け）＋グループ枠</span>`));
+  const sesTbl = document.createElement("table"); sesTbl.className="table";
 
-    photos.forEach(p=>{
-      const ts = p.ts;
-      const newId = `${newName}__${p.sessionId}__${ts}__${Math.random().toString(16).slice(2)}`;
-      const putReq = st.put({...p, id:newId, student:newName});
-      putReq.onsuccess = doneOne;
-      putReq.onerror = ()=> fail(putReq.error);
+  state.data.settings.sessions.forEach((s)=>{
+    const tr = document.createElement("tr");
 
-      const delReq = st.delete(p.id);
-      delReq.onsuccess = doneOne;
-      delReq.onerror = ()=> fail(delReq.error);
+    const td1 = document.createElement("td"); td1.className="w-170";
+    td1.innerHTML = `<div class="mono">${s.id}</div>`;
+
+    const td2 = document.createElement("td");
+    const label = document.createElement("input");
+    label.value = s.label;
+    label.oninput = ()=>{ s.label = label.value; saveData(); };
+    td2.appendChild(label);
+
+    const td3 = document.createElement("td"); td3.className="w-140";
+    const type = document.createElement("select");
+    [["whole","一斉"],["free","自由"],["test","テスト"]].forEach(([v,t])=>{
+      const o=document.createElement("option"); o.value=v; o.textContent=t; type.appendChild(o);
     });
+    type.value = s.type;
+    type.onchange = ()=>{ s.type = type.value; if(!s.unit) s.unit="other"; saveData(); renderPanel(); };
+    td3.appendChild(type);
+
+    const td4 = document.createElement("td"); td4.className="w-170";
+    td4.appendChild(unitSelect(s.unit, (v)=>{ s.unit=v; saveData(); renderPanel(); }));
+
+    const td5 = document.createElement("td"); td5.className="w-140";
+    const g = document.createElement("label");
+    g.className="pill";
+    g.style.cursor="pointer";
+    const chk = document.createElement("input"); chk.type="checkbox"; chk.checked=!!s.isGroup;
+    chk.onchange = ()=>{ s.isGroup = chk.checked; saveData(); renderPanel(); };
+    g.appendChild(chk);
+    g.appendChild(document.createTextNode("グループ枠"));
+    td5.appendChild(g);
+
+    const td6 = document.createElement("td"); td6.className="w-110";
+    const del = document.createElement("button");
+    del.className="btn danger"; del.textContent="削除";
+    del.onclick = ()=>{
+      if(!confirm(`「${s.label}」を削除しますか？`)) return;
+      state.data.settings.sessions = state.data.settings.sessions.filter(x=>x.id!==s.id);
+      saveData();
+      renderPanel();
+    };
+    td6.appendChild(del);
+
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4); tr.appendChild(td5); tr.appendChild(td6);
+    sesTbl.appendChild(tr);
+  });
+  ses.appendChild(sesTbl);
+
+  // add session
+  const addRow = document.createElement("div"); addRow.className="row";
+  const newId = document.createElement("input"); newId.placeholder="ID（例：L13）"; newId.className="w-140";
+  const newLabel = document.createElement("input"); newLabel.placeholder="表示名（例：第13時）"; newLabel.className="grow";
+  const newType = document.createElement("select");
+  [["whole","一斉"],["free","自由"],["test","テスト"]].forEach(([v,t])=>{
+    const o=document.createElement("option"); o.value=v; o.textContent=t; newType.appendChild(o);
+  });
+  const newUnit = unitSelect("other", ()=>{});
+  const newIsGroup = document.createElement("label");
+  newIsGroup.className="pill";
+  const newIsGroupChk = document.createElement("input"); newIsGroupChk.type="checkbox";
+  newIsGroup.appendChild(newIsGroupChk);
+  newIsGroup.appendChild(document.createTextNode("グループ枠"));
+
+  const addBtn = document.createElement("button"); addBtn.className="btn primary"; addBtn.textContent="授業枠を追加";
+  addBtn.onclick = ()=>{
+    const id = (newId.value||"").trim();
+    const label = (newLabel.value||"").trim();
+    const type = newType.value;
+    const unit = newUnit.value;
+    const isGroup = !!newIsGroupChk.checked;
+    if(!id || !label) return alert("IDと表示名を入力してください。");
+    if(state.data.settings.sessions.some(x=>x.id===id)) return alert("同じIDが既にあります。");
+    state.data.settings.sessions.push({id, label, type, unit, isGroup});
+    state.data.students.forEach(n=>{
+      const r = state.data.byStudent[n];
+      r.progress.bySession[id] = {status:"未", group:"", plan:"", done:"", note:""};
+    });
+    newId.value=""; newLabel.value=""; newIsGroupChk.checked=false;
+    saveData();
+    renderPanel();
+  };
+  addRow.appendChild(newId); addRow.appendChild(newLabel); addRow.appendChild(newType); addRow.appendChild(newUnit); addRow.appendChild(newIsGroup); addRow.appendChild(addBtn);
+  ses.appendChild(addRow);
+
+  /** deliverables editor */
+  const deliv = document.createElement("div"); deliv.className="card";
+  deliv.appendChild(labelRow("提出物リスト（編集）", `<span class="small">単元（色分け）も指定</span>`));
+  const dTbl = document.createElement("table"); dTbl.className="table";
+  state.data.settings.deliverables.forEach((d)=>{
+    const tr = document.createElement("tr");
+
+    const td1 = document.createElement("td"); td1.className="w-170";
+    td1.innerHTML = `<div class="mono">${d.id}</div>`;
+
+    const td2 = document.createElement("td");
+    const label = document.createElement("input");
+    label.value = d.label;
+    label.oninput = ()=>{ d.label = label.value; saveData(); };
+    td2.appendChild(label);
+
+    const td3 = document.createElement("td"); td3.className="w-170";
+    td3.appendChild(unitSelect(d.unit, (v)=>{ d.unit=v; saveData(); renderPanel(); }));
+
+    const td4 = document.createElement("td"); td4.className="w-110";
+    const del = document.createElement("button");
+    del.className="btn danger"; del.textContent="削除";
+    del.onclick = ()=>{
+      if(!confirm(`提出物「${d.label}」を削除しますか？`)) return;
+      state.data.settings.deliverables = state.data.settings.deliverables.filter(x=>x.id!==d.id);
+      saveData();
+      renderPanel();
+    };
+    td4.appendChild(del);
+
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+    dTbl.appendChild(tr);
+  });
+  deliv.appendChild(dTbl);
+
+  const addRow2 = document.createElement("div"); addRow2.className="row";
+  const newDid = document.createElement("input"); newDid.placeholder="ID（例：D7）"; newDid.className="w-140";
+  const newDLabel = document.createElement("input"); newDLabel.placeholder="提出物名（例：発表スライド）"; newDLabel.className="grow";
+  const newDUnit = unitSelect("other", ()=>{});
+  const addBtn2 = document.createElement("button"); addBtn2.className="btn primary"; addBtn2.textContent="提出物を追加";
+  addBtn2.onclick = ()=>{
+    const id = (newDid.value||"").trim();
+    const label = (newDLabel.value||"").trim();
+    const unit = newDUnit.value;
+    if(!id || !label) return alert("IDと提出物名を入力してください。");
+    if(state.data.settings.deliverables.some(x=>x.id===id)) return alert("同じIDが既にあります。");
+    state.data.settings.deliverables.push({id, label, unit});
+    state.data.students.forEach(n=>{
+      const r = state.data.byStudent[n];
+      r.deliverables.byId[id] = {submitted:false, date:"", note:""};
+    });
+    newDid.value=""; newDLabel.value="";
+    saveData();
+    renderPanel();
+  };
+  addRow2.appendChild(newDid); addRow2.appendChild(newDLabel); addRow2.appendChild(newDUnit); addRow2.appendChild(addBtn2);
+  deliv.appendChild(addRow2);
+
+  two.appendChild(ses);
+  two.appendChild(deliv);
+  setCard.appendChild(two);
+  box.appendChild(setCard);
+
+  /** individual progress */
+  box.appendChild(labelRow("12時間の進捗（児童の計画つき）", `<b>${state.currentStudent}</b>`));
+  const pCard = document.createElement("div"); pCard.className="card";
+  const pTbl = document.createElement("table"); pTbl.className="table";
+  const statuses = ["未","途中","完了","欠"];
+
+  state.data.settings.sessions.forEach(s=>{
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td"); td1.className="w-170";
+    td1.innerHTML = `<div><b>${s.label}</b></div>
+      <div class="small">種別：${s.type==="whole"?"一斉":(s.type==="free"?"自由":"テスト")} ／ 単元：${unitLabel(s.unit)} ${s.isGroup? "／ <b>グループ</b>":""}</div>`;
+
+    const td2 = document.createElement("td");
+
+    // 状態
+    const row = document.createElement("div"); row.className="row";
+    const stSel = document.createElement("select"); stSel.className="w-140";
+    statuses.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; stSel.appendChild(o); });
+    stSel.value = rec.progress.bySession[s.id]?.status || "未";
+    stSel.onchange = ()=>{
+      rec.progress.bySession[s.id].status = stSel.value;
+
+      // グループ同期
+      const groupName = (rec.progress.bySession[s.id].group||"").trim();
+      if(shouldSyncGroup(s.id) && groupName){
+        syncToSameGroup(s.id, groupName, (target)=>{
+          target.status = stSel.value;
+        });
+      }
+      saveData();
+      renderPanel();
+    };
+    row.appendChild(document.createTextNode("状態："));
+    row.appendChild(stSel);
+
+    // グループ名（グループ枠のみ表示）
+    if(s.isGroup){
+      const gInp = document.createElement("input");
+      gInp.placeholder = "グループ名（例：A班）";
+      gInp.className = "w-140";
+      gInp.value = rec.progress.bySession[s.id]?.group || "";
+      gInp.oninput = ()=>{
+        rec.progress.bySession[s.id].group = gInp.value;
+        saveData();
+      };
+      row.appendChild(document.createTextNode(" グループ："));
+      row.appendChild(gInp);
+    }
+
+    td2.appendChild(row);
+
+    const plan = document.createElement("textarea");
+    plan.placeholder = (s.type==="free") ? "児童の計画（この時間にやること）" : "（任意）この時間のメモ";
+    plan.value = rec.progress.bySession[s.id]?.plan || "";
+    plan.oninput = ()=>{
+      rec.progress.bySession[s.id].plan = plan.value;
+
+      const groupName = (rec.progress.bySession[s.id].group||"").trim();
+      if(shouldSyncGroup(s.id) && groupName){
+        syncToSameGroup(s.id, groupName, (target)=>{
+          target.plan = plan.value;
+        });
+      }
+      saveData();
+    };
+
+    const done = document.createElement("textarea");
+    done.placeholder = (s.type==="free") ? "実績メモ（やったこと・次へ）" : "実績メモ";
+    done.value = rec.progress.bySession[s.id]?.done || "";
+    done.oninput = ()=>{
+      rec.progress.bySession[s.id].done = done.value;
+
+      const groupName = (rec.progress.bySession[s.id].group||"").trim();
+      if(shouldSyncGroup(s.id) && groupName){
+        syncToSameGroup(s.id, groupName, (target)=>{
+          target.done = done.value;
+        });
+      }
+      saveData();
+    };
+
+    const note = document.createElement("input");
+    note.placeholder = "教師メモ（支援・声かけ等）";
+    note.value = rec.progress.bySession[s.id]?.note || "";
+    note.oninput = ()=>{
+      rec.progress.bySession[s.id].note = note.value;
+
+      const groupName = (rec.progress.bySession[s.id].group||"").trim();
+      if(shouldSyncGroup(s.id) && groupName){
+        syncToSameGroup(s.id, groupName, (target)=>{
+          target.note = note.value;
+        });
+      }
+      saveData();
+    };
+
+    td2.appendChild(plan);
+    td2.appendChild(done);
+    td2.appendChild(note);
+
+    tr.appendChild(td1); tr.appendChild(td2);
+    pTbl.appendChild(tr);
+  });
+
+  pCard.appendChild(pTbl);
+  box.appendChild(pCard);
+
+  /** individual deliverables */
+  box.appendChild(labelRow("提出物確認（児童別）", `<b>${state.currentStudent}</b>`));
+  const dCard = document.createElement("div"); dCard.className="card";
+  const dTbl2 = document.createElement("table"); dTbl2.className="table";
+
+  state.data.settings.deliverables.forEach(d=>{
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td"); td1.className="w-170";
+    td1.innerHTML = `<b>${d.label}</b>
+      <div class="small mono">${d.id}</div>
+      <div class="small">単元：${unitLabel(d.unit)}</div>`;
+
+    const td2 = document.createElement("td");
+    const row = document.createElement("div"); row.className="row";
+
+    const chk = document.createElement("input"); chk.type="checkbox";
+    chk.checked = !!rec.deliverables.byId[d.id]?.submitted;
+    chk.onchange = ()=>{ rec.deliverables.byId[d.id].submitted = chk.checked; saveData(); };
+
+    const date = document.createElement("input"); date.placeholder="提出日（任意）";
+    date.value = rec.deliverables.byId[d.id]?.date || "";
+    date.oninput = ()=>{ rec.deliverables.byId[d.id].date = date.value; saveData(); };
+
+    const note = document.createElement("input"); note.placeholder="メモ（再提出/未完など）";
+    note.value = rec.deliverables.byId[d.id]?.note || "";
+    note.oninput = ()=>{ rec.deliverables.byId[d.id].note = note.value; saveData(); };
+
+    row.appendChild(chk);
+    row.appendChild(document.createTextNode("提出"));
+    row.appendChild(date);
+    row.appendChild(note);
+
+    td2.appendChild(row);
+    tr.appendChild(td1); tr.appendChild(td2);
+    dTbl2.appendChild(tr);
+  });
+
+  dCard.appendChild(dTbl2);
+  box.appendChild(dCard);
+
+  /** photos */
+  box.appendChild(labelRow("授業の様子（写真保存）", `<span class="small">端末内保存（IndexedDB）</span>`));
+  const phCard = document.createElement("div"); phCard.className="card";
+
+  const phRow = document.createElement("div"); phRow.className="row";
+  const sessionSel = document.createElement("select");
+  state.data.settings.sessions.forEach(s=>{
+    const o=document.createElement("option");
+    o.value=s.id;
+    o.textContent=`${s.id}｜${s.label}`;
+    sessionSel.appendChild(o);
+  });
+
+  const fileInp = document.createElement("input");
+  fileInp.type="file";
+  fileInp.accept="image/*";
+  fileInp.capture="environment";
+
+  const noteInp = document.createElement("input");
+  noteInp.placeholder="写真メモ（任意）";
+  noteInp.className="grow";
+
+  const addBtn = document.createElement("button");
+  addBtn.className="btn primary";
+  addBtn.textContent="写真を保存";
+  addBtn.onclick = async ()=>{
+    const f = fileInp.files?.[0];
+    if(!f) return alert("画像を選択してください。");
+    addBtn.disabled = true;
+    try{
+      await addPhoto({
+        student: state.currentStudent,
+        sessionId: sessionSel.value,
+        note: noteInp.value,
+        file: f
+      });
+      fileInp.value="";
+      noteInp.value="";
+      await renderPhotosList(phCard);
+    }catch(e){
+      alert("写真保存に失敗：" + e.message);
+    }finally{
+      addBtn.disabled = false;
+    }
+  };
+
+  phRow.appendChild(document.createTextNode("授業枠："));
+  phRow.appendChild(sessionSel);
+  phRow.appendChild(fileInp);
+  phRow.appendChild(noteInp);
+  phRow.appendChild(addBtn);
+  phCard.appendChild(phRow);
+
+  const phListWrap = document.createElement("div");
+  phListWrap.className="hr";
+  phCard.appendChild(phListWrap);
+
+  const thumbs = document.createElement("div");
+  thumbs.className="thumbs";
+  thumbs.id = "thumbsArea";
+  phCard.appendChild(thumbs);
+
+  box.appendChild(phCard);
+
+  // 初回表示
+  renderPhotosList(phCard);
+
+  return box;
+}
+
+async function renderPhotosList(containerCard){
+  const thumbs = containerCard.querySelector("#thumbsArea");
+  if(!thumbs) return;
+  thumbs.innerHTML = `<div class="note">読み込み中…</div>`;
+  const items = await listPhotosByStudent(state.currentStudent, 80);
+  if(!items.length){
+    thumbs.innerHTML = `<div class="note">まだ写真がありません。</div>`;
+    return;
+  }
+  thumbs.innerHTML = "";
+  items.forEach(p=>{
+    const url = URL.createObjectURL(p.blob);
+    const d = document.createElement("div");
+    d.className="thumb";
+    d.innerHTML = `
+      <img src="${url}" alt="photo">
+      <div class="meta">
+        <div class="t">${escapeHtml(new Date(p.createdAt).toLocaleString())}</div>
+        <div class="t">枠：${escapeHtml(p.sessionId||"-")}</div>
+        <div class="t">${escapeHtml(p.note||"")}</div>
+        <div class="b">
+          <button data-act="open">開く</button>
+          <button data-act="del">削除</button>
+        </div>
+      </div>
+    `;
+    d.querySelector('[data-act="open"]').onclick = ()=>{
+      window.open(url, "_blank");
+    };
+    d.querySelector('[data-act="del"]').onclick = async ()=>{
+      if(!confirm("この写真を削除しますか？")) return;
+      await deletePhoto(p.id);
+      URL.revokeObjectURL(url);
+      await renderPhotosList(containerCard);
+    };
+    thumbs.appendChild(d);
   });
 }
 
-/** グループ同期：同じ sessionId & group の児童へ status/plan/done を反映 */
-function syncGroupProgress({sessionId, groupId, sourceStudent, patch}){
-  if(!groupId) return;
-  state.data.students.forEach(name=>{
-    if(name===sourceStudent) return;
-    const r = state.data.byStudent[name];
-    const cell = r?.progress?.bySession?.[sessionId];
-    if(!cell) return;
-    if((cell.group||"").trim() !== groupId.trim()) return;
-    // note（教師メモ）は同期しない
-    if(patch.status != null) cell.status = patch.status;
-    if(patch.plan != null) cell.plan = patch.plan;
-    if(patch.done != null) cell.done = patch.done;
+/** ===== overview (クラス) ===== */
+function renderOverview(){
+  const box = document.createElement("div");
+
+  const controls = document.createElement("div"); controls.className="card";
+  controls.appendChild(labelRow("一覧コントロール", `<span class="small">単元で絞り込み／CSV出力</span>`));
+  const row = document.createElement("div"); row.className="row";
+
+  const filterSel = document.createElement("select");
+  UNITS.forEach(u=>{
+    const o=document.createElement("option"); o.value=u.id; o.textContent=u.label; filterSel.appendChild(o);
   });
-  saveData();
+  filterSel.value = state.overviewFilterUnit || "all";
+  filterSel.onchange = ()=>{
+    state.overviewFilterUnit = filterSel.value;
+    renderPanel();
+  };
+
+  const btnP = document.createElement("button");
+  btnP.className="btn";
+  btnP.textContent = "進捗CSV出力";
+  btnP.onclick = ()=> exportProgressCSV(state.overviewFilterUnit);
+
+  const btnD = document.createElement("button");
+  btnD.className="btn";
+  btnD.textContent = "提出物CSV出力";
+  btnD.onclick = ()=> exportDeliverablesCSV(state.overviewFilterUnit);
+
+  row.appendChild(document.createTextNode("単元フィルタ："));
+  row.appendChild(filterSel);
+  row.appendChild(btnP);
+  row.appendChild(btnD);
+  controls.appendChild(row);
+  box.appendChild(controls);
+
+  box.appendChild(labelRow("進捗一覧（全員×授業枠）", `<span class="small">横スクロール／セルタップで状態切替</span>`));
+  const prog = document.createElement("div"); prog.className="card";
+  prog.appendChild(buildProgressOverviewTable(state.overviewFilterUnit));
+  box.appendChild(prog);
+
+  box.appendChild(labelRow("提出物一覧（全員×提出物）", `<span class="small">横スクロール／セルタップで提出切替</span>`));
+  const del = document.createElement("div"); del.className="card";
+  del.appendChild(buildDeliverablesOverviewTable(state.overviewFilterUnit));
+  box.appendChild(del);
+
+  return box;
 }
 
-/** ===== CSV ===== */
-function csvEscape(value){
-  const s = String(value ?? "");
-  if(/[,"\n\r]/.test(s)) return `"${s.replaceAll('"','""')}"`;
-  return s;
-}
-function downloadText(filename, text){
-  const blob = new Blob([text], {type:"text/csv;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-function exportProgressCSV(filterUnit="all"){
+function buildProgressOverviewTable(filterUnit="all"){
+  const container = document.createElement("div"); container.className="scrollX";
+  const tbl = document.createElement("table"); tbl.className="ovTable";
+
   const sessions = state.data.settings.sessions.filter(s=> filterUnit==="all" ? true : (s.unit===filterUnit));
-  const header = ["児童"];
+
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+  const th0 = document.createElement("th"); th0.className="sticky2";
+  th0.textContent = "児童";
+  trh.appendChild(th0);
+
   sessions.forEach(s=>{
-    header.push(`${s.id} 状態`);
-    header.push(`${s.id} グループ`);
-    header.push(`${s.id} 計画`);
-    header.push(`${s.id} 実績`);
-    header.push(`${s.id} 教師メモ`);
+    const th = document.createElement("th");
+    th.innerHTML = `
+      <div class="mono">${s.id}</div>
+      <div>${s.label}</div>
+      <div class="mini"><span class="dot ${unitDotClass(s.unit)}"></span>${unitLabel(s.unit)}${s.isGroup?"・グループ":""}</div>
+    `;
+    th.classList.add(unitClass(s.unit));
+    trh.appendChild(th);
   });
+  thead.appendChild(trh);
+  tbl.appendChild(thead);
 
-  const rows = [header];
-  state.data.students.forEach(st=>{
-    const r = state.data.byStudent[st];
-    const row = [st];
+  const tbody = document.createElement("tbody");
+  state.data.students.forEach(stName=>{
+    const r = state.data.byStudent[stName];
+    const tr = document.createElement("tr");
+
+    const td0 = document.createElement("td"); td0.className="sticky";
+    td0.innerHTML = `<b>${stName}</b><div class="mini">タップで個人へ</div>`;
+    td0.onclick = ()=>{
+      state.currentStudent = stName;
+      document.getElementById("studentSelect").value = stName;
+      document.getElementById("currentName").textContent = stName;
+      refreshKPIs();
+      state.currentTab = "progress";
+      renderTabs();
+      renderPanel();
+    };
+    tr.appendChild(td0);
+
     sessions.forEach(s=>{
-      const v = r.progress.bySession[s.id] || {status:"未",group:"",plan:"",done:"",note:""};
-      row.push(v.status || "");
-      row.push(v.group || "");
-      row.push(v.plan || "");
-      row.push(v.done || "");
-      row.push(v.note || "");
-    });
-    rows.push(row);
-  });
+      const td = document.createElement("td");
+      td.classList.add(unitClass(s.unit));
+      const stt = r.progress.bySession[s.id]?.status || "未";
+      const cell = document.createElement("div");
+      cell.className = `cell st-${stt}`;
+      cell.innerHTML = `<b>${stt}</b>` + (s.isGroup ? `<div class="mini">Grp:${escapeHtml(r.progress.bySession[s.id]?.group||"")}</div>` : ``);
 
-  const csv = rows.map(r=> r.map(csvEscape).join(",")).join("\n");
-  downloadText(`rika4_progress_${filterUnit}.csv`, csv);
+      td.onclick = ()=>{
+        const order = ["未","途中","完了","欠"];
+        const cur = r.progress.bySession[s.id].status || "未";
+        const idx = order.indexOf(cur);
+        r.progress.bySession[s.id].status = order[(idx+1)%order.length];
+        saveData();
+        renderPanel();
+      };
+
+      td.appendChild(cell);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+
+  container.appendChild(tbl);
+  return container;
 }
-function exportDeliverablesCSV(filterUnit="all"){
+
+function buildDeliverablesOverviewTable(filterUnit="all"){
+  const container = document.createElement("div"); container.className="scrollX";
+  const tbl = document.createElement("table"); tbl.className="ovTable";
+
   const dels = state.data.settings.deliverables.filter(d=> filterUnit==="all" ? true : (d.unit===filterUnit));
-  const header = ["児童"];
+
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+  const th0 = document.createElement("th"); th0.className="sticky2";
+  th0.textContent = "児童";
+  trh.appendChild(th0);
+
   dels.forEach(d=>{
-    header.push(`${d.id} 提出`);
-    header.push(`${d.id} 提出日`);
-    header.push(`${d.id} メモ`);
+    const th = document.createElement("th");
+    th.innerHTML = `
+      <div class="mono">${d.id}</div>
+      <div>${d.label}</div>
+      <div class="mini"><span class="dot ${unitDotClass(d.unit)}"></span>${unitLabel(d.unit)}</div>
+    `;
+    th.classList.add(unitClass(d.unit));
+    trh.appendChild(th);
   });
+  thead.appendChild(trh);
+  tbl.appendChild(thead);
 
-  const rows = [header];
-  state.data.students.forEach(st=>{
-    const r = state.data.byStudent[st];
-    const row = [st];
+  const tbody = document.createElement("tbody");
+  state.data.students.forEach(stName=>{
+    const r = state.data.byStudent[stName];
+    const tr = document.createElement("tr");
+
+    const td0 = document.createElement("td"); td0.className="sticky";
+    td0.innerHTML = `<b>${stName}</b><div class="mini">タップで個人へ</div>`;
+    td0.onclick = ()=>{
+      state.currentStudent = stName;
+      document.getElementById("studentSelect").value = stName;
+      document.getElementById("currentName").textContent = stName;
+      refreshKPIs();
+      state.currentTab = "progress";
+      renderTabs();
+      renderPanel();
+    };
+    tr.appendChild(td0);
+
     dels.forEach(d=>{
-      const v = r.deliverables.byId[d.id] || {submitted:false,date:"",note:""};
-      row.push(v.submitted ? "提出" : "未提出");
-      row.push(v.date || "");
-      row.push(v.note || "");
-    });
-    rows.push(row);
-  });
+      const td = document.createElement("td");
+      td.classList.add(unitClass(d.unit));
+      const sub = !!r.deliverables.byId[d.id]?.submitted;
+      const cell = document.createElement("div");
+      cell.className = `cell ${sub ? "st-完了" : "st-未"}`;
+      cell.innerHTML = `<b>${sub ? "提出" : "未提出"}</b>`;
 
-  const csv = rows.map(r=> r.map(csvEscape).join(",")).join("\n");
-  downloadText(`rika4_deliverables_${filterUnit}.csv`, csv);
+      td.onclick = ()=>{
+        r.deliverables.byId[d.id].submitted = !r.deliverables.byId[d.id].submitted;
+        saveData();
+        renderPanel();
+      };
+
+      td.appendChild(cell);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+
+  container.appendChild(tbl);
+  return container;
 }
+<!-- ===== Part4/5 END ===== -->
+<!-- ===== Part5/5 START ===== -->
+/** ===== 評価タブ：冬の星 ===== */
+function renderStar(rec){
+  const s = computeStarSuggest(rec);
+  const box = document.createElement("div");
+
+  box.appendChild(labelRow("冬の星｜知識・技能A（書き方）", `提案：<b>${s.ksA.grade}</b>（${s.ksA.score}/5）`));
+  const a = document.createElement("div"); a.className="card";
+  a.appendChild(checkItem("star.ksA.c1","観察条件（日付・時刻・場所など）が分かる", rec));
+  a.appendChild(checkItem("star.ksA.c2","見たこと中心で書いている（想像と区別）", rec));
+  a.appendChild(checkItem("star.ksA.c3","観察時刻ごとに分けて記録している", rec));
+  a.appendChild(checkItem("star.ksA.c4","丁寧に書こうとしている（途中放棄なし）", rec));
+  const row = document.createElement("div"); row.className="row";
+  const sel = document.createElement("select");
+  [["1","1回"],["2-3","2〜3回"],["4+","4回以上（+1・上限5）"]].forEach(([v,t])=>{
+    const o=document.createElement("option"); o.value=v; o.textContent=t; sel.appendChild(o);
+  });
+  sel.value = rec.star.ksA.obsCount;
+  sel.onchange=()=>{ rec.star.ksA.obsCount=sel.value; refreshKPIs(); renderPanel(); };
+  row.appendChild(document.createTextNode("観察回数："));
+  row.appendChild(sel);
+  a.appendChild(row);
+  box.appendChild(a);
+
+  box.appendChild(labelRow("冬の星｜知識・技能B（技能）", `提案：<b>${s.ksB.grade}</b>（${s.ksB.score}/5）`));
+  const b = document.createElement("div"); b.className="card";
+  b.appendChild(checkItem("star.ksB.c1","三つ星が一直線状に捉えられている", rec));
+  b.appendChild(checkItem("star.ksB.c2","三つ星＋周囲の星の位置関係が分かる", rec));
+  b.appendChild(checkItem("star.ksB.c3","オリオン座全体の形が分かる", rec));
+  b.appendChild(checkItem("star.ksB.c4","星同士の位置関係が大きく崩れていない", rec));
+  b.appendChild(checkItem("star.ksB.c5","観察結果にもとづいて描いている（写しではない）", rec));
+  box.appendChild(b);
+
+  box.appendChild(labelRow("冬の星｜思考A（予想）", `提案：<b>${s.thA.grade}</b>（${s.thA.score}/5）`));
+  const thA = document.createElement("div"); thA.className="card";
+  const r1 = document.createElement("div"); r1.className="row";
+  r1.appendChild(document.createTextNode("点数："));
+  r1.appendChild(numberInput("star.thA.score", rec, 0, 5));
+  thA.appendChild(r1);
+  box.appendChild(thA);
+
+  box.appendChild(labelRow("冬の星｜思考B（考察）", `提案：<b>${s.thB.grade}</b>（${s.thB.score}/5）`));
+  const thB = document.createElement("div"); thB.className="card";
+  const r2 = document.createElement("div"); r2.className="row";
+  r2.appendChild(document.createTextNode("点数："));
+  r2.appendChild(numberInput("star.thB.score", rec, 0, 5));
+  thB.appendChild(r2);
+  box.appendChild(thB);
+
+  box.appendChild(labelRow("冬の星｜主体（授業態度）", ""));
+  const att = document.createElement("div"); att.className="card";
+  att.innerHTML = `<div class="note">※冬の星の主体は授業中の態度で手動評価。</div>`;
+  const row3 = document.createElement("div"); row3.className="row";
+  row3.appendChild(document.createTextNode("最終評価："));
+  row3.appendChild(gradeSelect(rec.star.attitude.final, (v)=>{ rec.star.attitude.final=v; refreshKPIs(); }));
+  att.appendChild(row3);
+  box.appendChild(att);
+
+  return box;
+}
+
+/** ===== 評価タブ：生き物（まとめ） ===== */
+function renderBio(rec){
+  const s = computeBioSuggest(rec);
+  const box = document.createElement("div");
+
+  box.appendChild(labelRow("生き物（まとめ）｜知識・技能A（観察カード）", `提案：<b>${s.ksA.grade}</b>（${s.ksA.score}/5）`));
+  const a = document.createElement("div"); a.className="card";
+  a.appendChild(checkItem("bio.ksA.c1","観察条件（日付・季節・場所）が分かる", rec));
+  a.appendChild(checkItem("bio.ksA.c2","見たこと中心（想像や感想と区別）", rec));
+  a.appendChild(checkItem("bio.ksA.c3","継続して記録している（複数時期）", rec));
+  a.appendChild(checkItem("bio.ksA.c4","丁寧に書こうとしている", rec));
+  box.appendChild(a);
+
+  box.appendChild(labelRow("生き物（まとめ）｜思考A（比較）", `提案：<b>${s.thA.grade}</b>（${s.thA.score}/5）`));
+  const thA = document.createElement("div"); thA.className="card";
+  const r1 = document.createElement("div"); r1.className="row";
+  r1.appendChild(document.createTextNode("点数："));
+  r1.appendChild(numberInput("bio.thA.score", rec, 0, 5));
+  thA.appendChild(r1);
+  const advA = document.createElement("label"); advA.className="chk";
+  const advChkA = document.createElement("input"); advChkA.type="checkbox"; advChkA.checked=!!rec.bio.thA.multiUsed;
+  advChkA.onchange=()=>{ rec.bio.thA.multiUsed = advChkA.checked; refreshKPIs(); renderPanel(); };
+  advA.appendChild(advChkA);
+  const advTxtA = document.createElement("div");
+  advTxtA.innerHTML = `<div><b>2種類以上使って考察（+1 & Cなし）</b></div>`;
+  advA.appendChild(advTxtA);
+  thA.appendChild(advA);
+  box.appendChild(thA);
+
+  box.appendChild(labelRow("生き物（まとめ）｜思考B（関係づけ）", `提案：<b>${s.thB.grade}</b>（${s.thB.score}/5）`));
+  const thB = document.createElement("div"); thB.className="card";
+  const r2 = document.createElement("div"); r2.className="row";
+  r2.appendChild(document.createTextNode("点数："));
+  r2.appendChild(numberInput("bio.thB.score", rec, 0, 5));
+  thB.appendChild(r2);
+  const advB = document.createElement("label"); advB.className="chk";
+  const advChkB = document.createElement("input"); advChkB.type="checkbox"; advChkB.checked=!!rec.bio.thB.multiUsed;
+  advChkB.onchange=()=>{ rec.bio.thB.multiUsed = advChkB.checked; refreshKPIs(); renderPanel(); };
+  advB.appendChild(advChkB);
+  const advTxtB = document.createElement("div");
+  advTxtB.innerHTML = `<div><b>2種類以上使って考察（+1 & Cなし）</b></div>`;
+  advB.appendChild(advTxtB);
+  thB.appendChild(advB);
+  box.appendChild(thB);
+
+  box.appendChild(labelRow("主体（観察カード＋シンキングツール中心）", `提案：<b>${s.attitude.grade || "-"}</b>`));
+  const att = document.createElement("div"); att.className="card";
+  att.appendChild(checkItem("bio.attitude.checks.c1","提出物を完成させている", rec));
+  att.appendChild(checkItem("bio.attitude.checks.c2","対象を自分で選んで取り組んでいる", rec));
+  att.appendChild(checkItem("bio.attitude.checks.c3","修正・付け足しの跡がある", rec));
+  att.appendChild(checkItem("bio.attitude.checks.c4","図や写真を活用しようとしている", rec));
+  att.appendChild(checkItem("bio.attitude.checks.c5","最後までやり切っている", rec));
+  const rowF = document.createElement("div"); rowF.className="row";
+  rowF.appendChild(document.createTextNode("最終評価："));
+  rowF.appendChild(gradeSelect(rec.bio.attitude.final, (v)=>{ rec.bio.attitude.final=v; refreshKPIs(); }));
+  att.appendChild(rowF);
+  box.appendChild(att);
+
+  return box;
+}
+
+/** ===== 評価タブ：水のゆくえ ===== */
+function renderWater(rec){
+  const s = computeWaterSuggest(rec);
+  const box = document.createElement("div");
+
+  box.appendChild(labelRow("水のゆくえ｜主体（安全含む）", `提案：<b>${s.attitude.grade || "-"}</b>`));
+  const att = document.createElement("div"); att.className="card";
+  att.appendChild(checkItem("water.attitude.checks.c1","記録しようとしている", rec));
+  att.appendChild(checkItem("water.attitude.checks.c2","その場で書こうとしている", rec));
+  att.appendChild(checkItem("water.attitude.checks.c3","安全に配慮している", rec));
+  att.appendChild(checkItem("water.attitude.checks.c4","役割を意識して行動", rec));
+  att.appendChild(checkItem("water.attitude.checks.c5","片付けまでやり切る", rec));
+  const severeRow = document.createElement("label"); severeRow.className="chk";
+  const severe = document.createElement("input"); severe.type="checkbox"; severe.checked=!!rec.water.attitude.severe;
+  severe.onchange=()=>{ rec.water.attitude.severe=severe.checked; refreshKPIs(); renderPanel(); };
+  severeRow.appendChild(severe);
+  const severeTxt = document.createElement("div");
+  severeTxt.innerHTML = `<div><b>重大な安全違反（C固定）</b></div><div class="small">わざと器具破損・危害など</div>`;
+  severeRow.appendChild(severeTxt);
+  att.appendChild(severeRow);
+  const rowF = document.createElement("div"); rowF.className="row";
+  rowF.appendChild(document.createTextNode("最終評価："));
+  rowF.appendChild(gradeSelect(rec.water.attitude.final, (v)=>{ rec.water.attitude.final=v; refreshKPIs(); }));
+  att.appendChild(rowF);
+  box.appendChild(att);
+
+  const evap = document.createElement("div"); evap.className="card";
+  evap.appendChild(labelRow("蒸発｜知識・技能A/B（チェック）", `提案：知A:${s.evap.ksA.grade} 知B:${s.evap.ksB.grade} 思:${s.evap.th.grade}`));
+  evap.appendChild(checkItem("water.evap.ksA.c1","条件を捉えている（温度/場所など）", rec));
+  evap.appendChild(checkItem("water.evap.ksA.c2","変化を捉えている（減った等）", rec));
+  evap.appendChild(checkItem("water.evap.ksA.c3","図や言葉で表せている", rec));
+  evap.appendChild(checkItem("water.evap.ksA.c4","丁寧に記録している", rec));
+  evap.appendChild(checkItem("water.evap.ksA.c5","根拠に基づく記録", rec));
+  evap.appendChild(newHr());
+  evap.appendChild(checkItem("water.evap.ksB.c1","結果と原因を区別", rec));
+  evap.appendChild(checkItem("water.evap.ksB.c2","比較ができている", rec));
+  evap.appendChild(checkItem("water.evap.ksB.c3","言い換え/まとめができている", rec));
+  evap.appendChild(checkItem("water.evap.ksB.c4","実験結果に沿う", rec));
+  evap.appendChild(checkItem("water.evap.ksB.c5","用語を適切に使用", rec));
+  const rr1 = document.createElement("div"); rr1.className="row";
+  rr1.appendChild(document.createTextNode("考察点（0-5）："));
+  rr1.appendChild(numberInput("water.evap.th.score", rec, 0, 5));
+  evap.appendChild(rr1);
+  box.appendChild(evap);
+
+  const cond = document.createElement("div"); cond.className="card";
+  cond.appendChild(labelRow("結露｜知識・技能A/B（チェック）", `提案：知A:${s.cond.ksA.grade} 知B:${s.cond.ksB.grade} 思:${s.cond.th.grade}`));
+  cond.appendChild(checkItem("water.cond.ksA.c1","条件を捉えている（冷やす等）", rec));
+  cond.appendChild(checkItem("water.cond.ksA.c2","変化を捉えている（水滴等）", rec));
+  cond.appendChild(checkItem("water.cond.ksA.c3","図や言葉で表せている", rec));
+  cond.appendChild(checkItem("water.cond.ksA.c4","丁寧に記録している", rec));
+  cond.appendChild(checkItem("water.cond.ksA.c5","根拠に基づく記録", rec));
+  cond.appendChild(newHr());
+  cond.appendChild(checkItem("water.cond.ksB.c1","結果と原因を区別", rec));
+  cond.appendChild(checkItem("water.cond.ksB.c2","比較ができている", rec));
+  cond.appendChild(checkItem("water.cond.ksB.c3","言い換え/まとめができている", rec));
+  cond.appendChild(checkItem("water.cond.ksB.c4","実験結果に沿う", rec));
+  cond.appendChild(checkItem("water.cond.ksB.c5","用語を適切に使用", rec));
+  const rr2 = document.createElement("div"); rr2.className="row";
+  rr2.appendChild(document.createTextNode("考察点（0-5）："));
+  rr2.appendChild(numberInput("water.cond.th.score", rec, 0, 5));
+  cond.appendChild(rr2);
+  box.appendChild(cond);
+
+  return box;
+}
+
+/** ===== 評価タブ：発表（主体） ===== */
+function renderPres(rec){
+  const s = computePresSuggest(rec);
+  const box = document.createElement("div");
+  box.appendChild(labelRow("発表会｜主体のみ", `提案：<b>${s.attitude.grade || "-"}</b>`));
+  const att = document.createElement("div"); att.className="card";
+  att.appendChild(checkItem("pres.attitude.checks.c1","発表準備に関わっている", rec));
+  att.appendChild(checkItem("pres.attitude.checks.c2","自分の役割を果たそうとしている", rec));
+  att.appendChild(checkItem("pres.attitude.checks.c3","前向きに参加している", rec));
+  att.appendChild(checkItem("pres.attitude.checks.c4","仲間と協力している", rec));
+  att.appendChild(checkItem("pres.attitude.checks.c5","最後までやり切っている", rec));
+  const rowF = document.createElement("div"); rowF.className="row";
+  rowF.appendChild(document.createTextNode("最終評価："));
+  rowF.appendChild(gradeSelect(rec.pres.attitude.final, (v)=>{ rec.pres.attitude.final=v; refreshKPIs(); }));
+  att.appendChild(rowF);
+  box.appendChild(att);
+  return box;
+}
+
+function newHr(){
+  const d = document.createElement("div");
+  d.className="hr";
+  return d;
+}
+
+/** ===== Start ===== */
+init();
+</script>
+</body>
+</html>
+<!-- ===== Part5/5 END ===== -->
