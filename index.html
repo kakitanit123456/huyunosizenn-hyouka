@@ -1133,40 +1133,41 @@ function renderProgressAndDeliverables(rec){
   ses.appendChild(sesTbl);
 
   // add session
-  const addRow = document.createElement("div"); addRow.className="row";
-  const newId = document.createElement("input"); newId.placeholder="ID（例：L13）"; newId.className="w-140";
-  const newLabel = document.createElement("input"); newLabel.placeholder="表示名（例：第13時）"; newLabel.className="grow";
-  const newType = document.createElement("select");
-  [["whole","一斉"],["free","自由"],["test","テスト"]].forEach(([v,t])=>{
-    const o=document.createElement("option"); o.value=v; o.textContent=t; newType.appendChild(o);
-  });
-  const newUnit = unitSelect("other", ()=>{});
-  const newIsGroup = document.createElement("label");
-  newIsGroup.className="pill";
-  const newIsGroupChk = document.createElement("input"); newIsGroupChk.type="checkbox";
-  newIsGroup.appendChild(newIsGroupChk);
-  newIsGroup.appendChild(document.createTextNode("グループ枠"));
+const addRow = document.createElement("div"); addRow.className="row";
+const newId = document.createElement("input"); newId.placeholder="ID（例：L13）"; newId.className="w-140";
+const newLabel = document.createElement("input"); newLabel.placeholder="表示名（例：第13時）"; newLabel.className="grow";
+const newType = document.createElement("select");
+[["whole","一斉"],["free","自由"],["test","テスト"]].forEach(([v,t])=>{
+  const o=document.createElement("option"); o.value=v; o.textContent=t; newType.appendChild(o);
+});
+const newUnit = unitSelect("other", ()=>{});
 
-  const addSessionBtn = document.createElement("button"); addSessionBtn.className="btn primary"; addSessionBtn.textContent="授業枠を追加";
-  addSessionBtn.onclick = ()=>{
-    const id = (newId.value||"").trim();
-    const label = (newLabel.value||"").trim();
-    const type = newType.value;
-    const unit = newUnit.value;
-    const isGroup = !!newIsGroupChk.checked;
-    if(!id || !label) return alert("IDと表示名を入力してください。");
-    if(state.data.settings.sessions.some(x=>x.id===id)) return alert("同じIDが既にあります。");
-    state.data.settings.sessions.push({id, label, type, unit, isGroup});
-    state.data.students.forEach(n=>{
-      const r = state.data.byStudent[n];
-      r.progress.bySession[id] = {status:"未", group:"", plan:"", done:"", note:""};
-    });
-    newId.value=""; newLabel.value=""; newIsGroupChk.checked=false;
-    saveData();
-    renderPanel();
-  };
-  addRow.appendChild(newId); addRow.appendChild(newLabel); addRow.appendChild(newType); addRow.appendChild(newUnit); addRow.appendChild(newIsGroup); addRow.appendChild(addBtn);
-  ses.appendChild(addRow);
+const addSessionBtn = document.createElement("button");
+addSessionBtn.className="btn primary";
+addSessionBtn.textContent="授業枠を追加";
+addSessionBtn.onclick = ()=>{
+  const id = (newId.value||"").trim();
+  const label = (newLabel.value||"").trim();
+  const type = newType.value;
+  const unit = newUnit.value;
+  if(!id || !label) return alert("IDと表示名を入力してください。");
+  if(state.data.settings.sessions.some(x=>x.id===id)) return alert("同じIDが既にあります。");
+  state.data.settings.sessions.push({id, label, type, unit});
+  state.data.students.forEach(n=>{
+    const r = state.data.byStudent[n];
+    r.progress.bySession[id] = {status:"未", plan:"", done:"", note:""};
+  });
+  newId.value=""; newLabel.value="";
+  saveData();
+  renderPanel();
+};
+
+addRow.appendChild(newId);
+addRow.appendChild(newLabel);
+addRow.appendChild(newType);
+addRow.appendChild(newUnit);
+addRow.appendChild(addSessionBtn);
+ses.appendChild(addRow);
 
   /** deliverables editor */
   const deliv = document.createElement("div"); deliv.className="card";
