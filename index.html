@@ -111,6 +111,38 @@
   --chip:#eef2f8;
   --btn:#ffffff;
 }
+    /* ===== Force light visuals (変数が効かない/上書きされる場合の強制) ===== */
+html[data-theme="light"] body{
+  background:#f6f7fb !important;
+  color:#0c1220 !important;
+}
+
+html[data-theme="light"] header{
+  background:rgba(255,255,255,.92) !important;
+  border-bottom:1px solid #d9e0ea !important;
+}
+
+html[data-theme="light"] .card{
+  background:#ffffff !important;
+  border-color:#d9e0ea !important;
+}
+
+html[data-theme="light"] .card.soft{
+  background:#f1f3f8 !important;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] select{
+  background:#ffffff !important;
+  color:#0c1220 !important;
+  border-color:#d9e0ea !important;
+}
+
+html[data-theme="light"] .btn{
+  background:#ffffff !important;
+  color:#0c1220 !important;
+  border-color:#d9e0ea !important;
+}
   </style>
 </head>
 
