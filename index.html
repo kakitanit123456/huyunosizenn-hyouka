@@ -223,6 +223,25 @@ html[data-theme="light"] header{
 
     <div class="card" style="background:rgba(255,255,255,.03)">
       <div class="card" style="margin-top:12px">
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px">グループ同期テスト</div>
+
+  <div class="sub" style="margin-bottom:8px">
+    同じグループの児童に「計画メモ」を同期します（このミニ版で動作確認）
+  </div>
+
+  <div class="row" style="align-items:center">
+    <label class="sub" style="display:flex;gap:8px;align-items:center;margin:0">
+      <input id="syncToggle" type="checkbox" style="width:auto" />
+      同期を有効にする
+    </label>
+  </div>
+
+  <div class="sub" style="margin-top:8px">計画メモ：</div>
+  <input id="planInput" placeholder="例：観察カード／写真／発表準備 など" />
+
+  <div class="sub" id="syncInfo" style="margin-top:8px"></div>
+</div>
+      <div class="card" style="margin-top:12px">
   <div style="font-size:14px;font-weight:700;margin-bottom:6px">画像記録（児童別・1枚）</div>
 
   <div class="sub" style="margin-bottom:8px">
@@ -270,8 +289,10 @@ html[data-theme="light"] header{
   // ===== Data (students + 1 photo per student) =====
   const defaultData = {
     students: ["（児童1）"],
-    studentGroup: {},   // ← 追加：{ "（児童1）":"G1" } みたいに入る
+    studentGroup: {}, 
     photosByStudent: {} 
+    plansByStudent: {} 
+    progressByStudent: {} // ← 追加（同期対象のデータ）
   };
 
   function loadData(){
@@ -282,8 +303,17 @@ html[data-theme="light"] header{
       if(!Array.isArray(d.students)) d.students = structuredClone(defaultData.students);
       if(!d.photosByStudent || typeof d.photosByStudent !== "object") d.photosByStudent = {};
       if(!d.studentGroup || typeof d.studentGroup !== "object") d.studentGroup = {};
+      if(!d.plansByStudent || typeof d.plansByStudent !== "object") d.plansByStudent = {};
       d.students.forEach(n=>{
       if(d.studentGroup[n] == null) d.studentGroup[n] = "";
+      if(d.progressByStudent[n] == null){
+        d.progressByStudent[n] = {
+        plan: "",   // 計画（例：この時間にやること）
+        done: "",   // 実績
+        note: ""    // 教師メモ
+      };
+    }
+      if(d.plansByStudent[n] == null) d.plansByStudent[n] = "";
       });
       if(d.students.length === 0) d.students = structuredClone(defaultData.students);
       return d;
@@ -300,7 +330,26 @@ html[data-theme="light"] header{
     data: loadData(),
     currentStudent: null
   };
+  
+function getGroupMembers(studentName){
+  const g = state.data.studentGroup?.[studentName] || "";
+  if(!g) return [studentName]; // 未設定なら自分だけ
+  return state.data.students.filter(n => (state.data.studentGroup?.[n] || "") === g);
+}
+  function syncProgressToGroup(fromStudent){
+  const members = getGroupMembers(fromStudent);
+  const src = state.data.progressByStudent[fromStudent];
 
+  members.forEach(m=>{
+    state.data.progressByStudent[m] = {
+      plan: src.plan || "",
+      done: src.done || "",
+      note: src.note || ""
+    };
+  });
+
+  saveData();
+}
   // ===== UI: student select =====
   function renderStudentSelect(){
     const sel = document.getElementById("studentSelect");
