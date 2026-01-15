@@ -297,7 +297,6 @@ html[data-theme="light"] header{
     students: ["（児童1）"],
     studentGroup: {},
     photosByStudent: {},
-    plansByStudent: {},
     progressByStudent: {} // ← ここは必ず空オブジェクト
   };
 
@@ -309,7 +308,6 @@ html[data-theme="light"] header{
       if(!Array.isArray(d.students)) d.students = structuredClone(defaultData.students);
       if(!d.photosByStudent || typeof d.photosByStudent !== "object") d.photosByStudent = {};
       if(!d.studentGroup || typeof d.studentGroup !== "object") d.studentGroup = {};
-      if(!d.plansByStudent || typeof d.plansByStudent !== "object") d.plansByStudent = {};
       if(!d.progressByStudent || typeof d.progressByStudent !== "object") d.progressByStudent = {};
       d.students.forEach(n=>{
       if(d.studentGroup[n] == null) d.studentGroup[n] = "";
@@ -325,7 +323,6 @@ html[data-theme="light"] header{
         if(d.progressByStudent[n].plan == null) d.progressByStudent[n].plan = "";
         if(d.progressByStudent[n].note == null) d.progressByStudent[n].note = "";
       }
-      if(d.plansByStudent[n] == null) d.plansByStudent[n] = "";
       });
       if(d.students.length === 0) d.students = structuredClone(defaultData.students);
       return d;
@@ -387,18 +384,6 @@ function renderSyncTestUI(){
   }
 
   // 入力欄に現在値を反映
-  input.value  = state.data.progressByStudent[state.currentStudent].plan || "";
-  status.value = state.data.progressByStudent[state.currentStudent].status || "";
-
-  // 表示メッセージ
-  const members = getGroupMembers(state.currentStudent);
-  const g = state.data.studentGroup?.[state.currentStudent] || "";
-  info.textContent = g
-    ? `対象グループ：${g}（同期先 ${members.length}人）`
-    : `グループ未設定：この児童だけ（同期なし）`;
-}
-
-  // 入力欄に現在値を反映
   input.value = state.data.progressByStudent[state.currentStudent].plan || "";
 
   // 表示メッセージ
@@ -453,13 +438,6 @@ function bindSyncTest(){
     saveAndMaybeSync();
   };
 }
-
-  // 入力→保存（必要なら同期）
-  input.oninput = ()=>{
-    state.data.progressByStudent = state.data.progressByStudent || {};
-    if(!state.data.progressByStudent[state.currentStudent]){
-      state.data.progressByStudent[state.currentStudent] = { plan:"", done:"", note:"" };
-    }
 
     state.data.progressByStudent[state.currentStudent].plan = input.value;
     saveData();
