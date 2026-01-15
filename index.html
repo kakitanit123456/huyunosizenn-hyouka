@@ -186,11 +186,23 @@ html[data-theme="light"] header{
         <option>（児童1）</option>
       </select>
       <button class="btn" id="btnAddStudent" type="button">追加</button>
-
+    </div>
     <div class="row">
       <input id="newStudentName" class="grow" placeholder="追加する児童名（例：山田 太郎）" />
     </div>
+<div class="sub" style="margin-top:10px; font-weight:700">グループ設定（2・2・3）</div>
 
+<div class="row">
+  <select id="groupSelect" class="grow">
+    <option value="">（未設定）</option>
+    <option value="G1">G1（2人）</option>
+    <option value="G2">G2（2人）</option>
+    <option value="G3">G3（3人）</option>
+  </select>
+  <button class="btn" id="btnAutoGroup" type="button">自動(2・2・3)</button>
+</div>
+
+<div class="sub" id="groupCount" style="margin-top:6px"></div>
     <div class="sub" style="margin-top:10px">
       ※ Part2 以降で「本当に追加できる」ようにします。
     </div>
@@ -252,7 +264,8 @@ html[data-theme="light"] header{
   // ===== Data (students + 1 photo per student) =====
   const defaultData = {
     students: ["（児童1）"],
-    photosByStudent: {} // { "山田 太郎": "data:image/...." }
+    studentGroup: {},   // ← 追加：{ "（児童1）":"G1" } みたいに入る
+    photosByStudent: {} 
   };
 
   function loadData(){
@@ -262,6 +275,10 @@ html[data-theme="light"] header{
       const d = JSON.parse(raw);
       if(!Array.isArray(d.students)) d.students = structuredClone(defaultData.students);
       if(!d.photosByStudent || typeof d.photosByStudent !== "object") d.photosByStudent = {};
+      if(!d.studentGroup || typeof d.studentGroup !== "object") d.studentGroup = {};
+      d.students.forEach(n=>{
+      if(d.studentGroup[n] == null) d.studentGroup[n] = "";
+      });
       if(d.students.length === 0) d.students = structuredClone(defaultData.students);
       return d;
     }catch(e){
@@ -294,11 +311,47 @@ html[data-theme="light"] header{
 
     sel.onchange = ()=>{
       state.currentStudent = sel.value;
+      renderGroupUI();
       renderPhotoPreview();
       saveData();
     };
   }
+function renderGroupUI(){
+  const sel = document.getElementById("groupSelect");
+  const cnt = document.getElementById("groupCount");
+  if(!sel || !cnt) return;
 
+  // 現在児童のグループを反映
+  const g = state.data.studentGroup?.[state.currentStudent] || "";
+  sel.value = g;
+
+  // 人数表示
+  const counts = {G1:0,G2:0,G3:0,"":0};
+  state.data.students.forEach(n=>{
+    const gg = state.data.studentGroup?.[n] || "";
+    counts[gg] = (counts[gg] ?? 0) + 1;
+  });
+  cnt.textContent = `人数：G1=${counts.G1} / G2=${counts.G2} / G3=${counts.G3}（未=${counts[""]}）`;
+
+  // 変更保存
+  sel.onchange = ()=>{
+    state.data.studentGroup = state.data.studentGroup || {};
+    state.data.studentGroup[state.currentStudent] = sel.value;
+    saveData();
+    renderGroupUI();
+  };
+}
+
+function autoAssignGroups223(){
+  const list = state.data.students.slice();
+  const plan = ["G1","G1","G2","G2","G3","G3","G3"];
+  state.data.studentGroup = state.data.studentGroup || {};
+  list.forEach((n,i)=>{
+    state.data.studentGroup[n] = plan[i] || "G3";
+  });
+  saveData();
+  renderGroupUI();
+}
   function bindAddStudent(){
     const btn = document.getElementById("btnAddStudent");
     const inp = document.getElementById("newStudentName");
@@ -309,11 +362,24 @@ html[data-theme="light"] header{
       if(state.data.students.includes(name)) return alert("同名の児童がすでにいます。");
 
       state.data.students.push(name);
+      state.data.studentGroup[name] = "";
       state.currentStudent = name;
       inp.value = "";
       saveData();
       renderStudentSelect();
+      renderGroupUI();
       renderPhotoPreview();
+      // グループUI初期表示
+renderGroupUI();
+
+// 自動割り当てボタン
+const autoBtn = document.getElementById("btnAutoGroup");
+if(autoBtn){
+  autoBtn.onclick = ()=>{
+    if(!confirm("児童順に 2・2・3（G1,G2,G3）で自動割り当てしますか？")) return;
+    autoAssignGroups223();
+  };
+}
     };
 
     inp.onkeydown = (e)=>{
