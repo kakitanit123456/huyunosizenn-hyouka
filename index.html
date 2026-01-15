@@ -290,8 +290,8 @@ html[data-theme="light"] header{
   const defaultData = {
     students: ["（児童1）"],
     studentGroup: {}, 
-    photosByStudent: {} 
-    plansByStudent: {} 
+    photosByStudent: {}, 
+    plansByStudent: {}, 
     progressByStudent: {} // ← 追加（同期対象のデータ）
   };
 
@@ -304,6 +304,7 @@ html[data-theme="light"] header{
       if(!d.photosByStudent || typeof d.photosByStudent !== "object") d.photosByStudent = {};
       if(!d.studentGroup || typeof d.studentGroup !== "object") d.studentGroup = {};
       if(!d.plansByStudent || typeof d.plansByStudent !== "object") d.plansByStudent = {};
+      if(!d.progressByStudent || typeof d.progressByStudent !== "object") d.progressByStudent = {};
       d.students.forEach(n=>{
       if(d.studentGroup[n] == null) d.studentGroup[n] = "";
       if(d.progressByStudent[n] == null){
@@ -347,7 +348,58 @@ function getGroupMembers(studentName){
       note: src.note || ""
     };
   });
+function renderSyncTestUI(){
+  const toggle = document.getElementById("syncToggle");
+  const input  = document.getElementById("planInput");
+  const info   = document.getElementById("syncInfo");
+  if(!toggle || !input || !info) return;
 
+  // 児童のprogressが無い場合は保険で作る
+  state.data.progressByStudent = state.data.progressByStudent || {};
+  if(!state.data.progressByStudent[state.currentStudent]){
+    state.data.progressByStudent[state.currentStudent] = { plan:"", done:"", note:"" };
+  }
+
+  // 入力欄に現在値を反映
+  input.value = state.data.progressByStudent[state.currentStudent].plan || "";
+
+  // 表示メッセージ
+  const members = getGroupMembers(state.currentStudent);
+  const g = state.data.studentGroup?.[state.currentStudent] || "";
+  info.textContent = g
+    ? `対象グループ：${g}（同期先 ${members.length}人）`
+    : `グループ未設定：この児童だけ（同期なし）`;
+}
+  function bindSyncTest(){
+  const toggle = document.getElementById("syncToggle");
+  const input  = document.getElementById("planInput");
+  if(!toggle || !input) return;
+
+  // 同期ON/OFFを保存（端末内）
+  const SYNC_KEY = "rika4_sync_enabled_v1";
+  toggle.checked = (localStorage.getItem(SYNC_KEY) === "1");
+
+  toggle.onchange = ()=>{
+    localStorage.setItem(SYNC_KEY, toggle.checked ? "1" : "0");
+    renderSyncTestUI();
+  };
+
+  // 入力→保存（必要なら同期）
+  input.oninput = ()=>{
+    state.data.progressByStudent = state.data.progressByStudent || {};
+    if(!state.data.progressByStudent[state.currentStudent]){
+      state.data.progressByStudent[state.currentStudent] = { plan:"", done:"", note:"" };
+    }
+
+    state.data.progressByStudent[state.currentStudent].plan = input.value;
+    saveData();
+
+    if(toggle.checked){
+      syncProgressToGroup(state.currentStudent);
+    }
+    renderSyncTestUI();
+  };
+}
   saveData();
 }
   // ===== UI: student select =====
@@ -368,6 +420,7 @@ function getGroupMembers(studentName){
       state.currentStudent = sel.value;
       renderGroupUI();
       renderPhotoPreview();
+      renderSyncTestUI();
       saveData();
     };
   }
@@ -525,7 +578,9 @@ function autoAssignGroups223(){
     renderPhotoPreview();
     // グループUI初期表示
 renderGroupUI();
-
+bindSyncTest();
+renderSyncTestUI();
+    
 // 自動割り当てボタン（最初から有効にする）
 const autoBtn = document.getElementById("btnAutoGroup");
 if(autoBtn){
