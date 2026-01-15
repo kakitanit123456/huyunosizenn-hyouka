@@ -98,6 +98,18 @@
 
 #btnTheme{
   z-index: 10001;
+
+  /* ===== Light theme overrides ===== */
+:root[data-theme="light"]{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --card2:#f1f3f8;
+  --text:#0c1220;
+  --muted:#4b5565;
+  --line:#d9e0ea;
+  --chip:#eef2f8;
+  --btn:#ffffff;
+}
 }
   </style>
 </head>
@@ -113,7 +125,7 @@
   </div>
 
   <div class="row headerActions">
-    <button class="btn" id="btnTheme" onclick="alert('theme clicked')">☀️/🌙</button>
+    <button class="btn" id="btnTheme" type="button">☀️/🌙</button>
     <button class="btn" id="btnExport" onclick="alert('export clicked')">エクスポート</button>
     <button class="btn" id="btnImport" onclick="alert('import clicked')">インポート</button>
     <button class="btn" id="btnReset" onclick="alert('reset clicked')">全データ削除</button>
@@ -163,6 +175,35 @@
     </div>
   </div>
 </div>
+<script>
+  const THEME_KEY = "rika4_theme_v2";
 
+  function applyTheme(mode){
+    document.documentElement.dataset.theme = mode;
+    localStorage.setItem(THEME_KEY, mode);
+
+    const btn = document.getElementById("btnTheme");
+    if(btn){
+      // 今がlightなら「🌙（ダークにする）」、darkなら「☀️（ライトにする）」
+      btn.textContent = (mode === "light") ? "🌙" : "☀️";
+      btn.title = (mode === "light") ? "ダークに切り替え" : "ライトに切り替え";
+    }
+  }
+
+  function toggleTheme(){
+    const cur = document.documentElement.dataset.theme || "dark";
+    applyTheme(cur === "dark" ? "light" : "dark");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // 初期テーマ適用（保存がなければdark）
+    applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+
+    const btn = document.getElementById("btnTheme");
+    if(btn){
+      btn.addEventListener("click", toggleTheme);
+    }
+  });
+</script>
 </body>
 </html>
