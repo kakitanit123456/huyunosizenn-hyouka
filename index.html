@@ -185,8 +185,7 @@ html[data-theme="light"] header{
       <select id="studentSelect" class="grow">
         <option>（児童1）</option>
       </select>
-      <button class="btn" id="btnAddStudent" onclick="alert('add student clicked')">追加</button>
-    </div>
+      <button class="btn" id="btnAddStudent" type="button">追加</button>
 
     <div class="row">
       <input id="newStudentName" class="grow" placeholder="追加する児童名（例：山田 太郎）" />
@@ -205,6 +204,21 @@ html[data-theme="light"] header{
     </div>
 
     <div class="card" style="background:rgba(255,255,255,.03)">
+      <div class="card" style="margin-top:12px">
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px">画像記録（児童別・1枚）</div>
+
+  <div class="sub" style="margin-bottom:8px">
+    選択中の児童に画像を保存します（端末内 localStorage／上書き保存）
+  </div>
+
+  <div class="row">
+    <input id="photoInput" type="file" accept="image/*" />
+    <button class="btn" id="btnClearPhoto" type="button">画像を削除</button>
+  </div>
+
+  <div class="sub" style="margin-top:8px">プレビュー：</div>
+  <img id="photoPreview" alt="" style="width:100%;max-height:320px;object-fit:contain;border:1px solid var(--line);border-radius:12px;display:none;margin-top:6px" />
+</div>
       <div style="font-size:14px;font-weight:700;margin-bottom:6px">確認ポイント</div>
       <ul style="margin:0; padding-left:18px; color:var(--muted); line-height:1.7; font-size:13px">
         <li>右上の ☀️/🌙 を押すと「theme clicked」が出る</li>
@@ -215,33 +229,190 @@ html[data-theme="light"] header{
   </div>
 </div>
 <script>
+  // ===== Storage keys =====
   const THEME_KEY = "rika4_theme_v2";
+  const DATA_KEY  = "rika4_minidata_v1"; // 名簿＋画像（最小版）
 
+  // ===== Theme =====
   function applyTheme(mode){
     document.documentElement.dataset.theme = mode;
     localStorage.setItem(THEME_KEY, mode);
 
     const btn = document.getElementById("btnTheme");
     if(btn){
-      // 今がlightなら「🌙（ダークにする）」、darkなら「☀️（ライトにする）」
       btn.textContent = (mode === "light") ? "🌙" : "☀️";
       btn.title = (mode === "light") ? "ダークに切り替え" : "ライトに切り替え";
     }
   }
-
   function toggleTheme(){
     const cur = document.documentElement.dataset.theme || "dark";
     applyTheme(cur === "dark" ? "light" : "dark");
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // 初期テーマ適用（保存がなければdark）
-    applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  // ===== Data (students + 1 photo per student) =====
+  const defaultData = {
+    students: ["（児童1）"],
+    photosByStudent: {} // { "山田 太郎": "data:image/...." }
+  };
 
-    const btn = document.getElementById("btnTheme");
-    if(btn){
-      btn.addEventListener("click", toggleTheme);
+  function loadData(){
+    try{
+      const raw = localStorage.getItem(DATA_KEY);
+      if(!raw) return structuredClone(defaultData);
+      const d = JSON.parse(raw);
+      if(!Array.isArray(d.students)) d.students = structuredClone(defaultData.students);
+      if(!d.photosByStudent || typeof d.photosByStudent !== "object") d.photosByStudent = {};
+      if(d.students.length === 0) d.students = structuredClone(defaultData.students);
+      return d;
+    }catch(e){
+      console.warn(e);
+      return structuredClone(defaultData);
     }
+  }
+  function saveData(){
+    localStorage.setItem(DATA_KEY, JSON.stringify(state.data));
+  }
+
+  const state = {
+    data: loadData(),
+    currentStudent: null
+  };
+
+  // ===== UI: student select =====
+  function renderStudentSelect(){
+    const sel = document.getElementById("studentSelect");
+    sel.innerHTML = "";
+    state.data.students.forEach(name=>{
+      const o = document.createElement("option");
+      o.value = name;
+      o.textContent = name;
+      sel.appendChild(o);
+    });
+
+    if(!state.currentStudent) state.currentStudent = state.data.students[0];
+    sel.value = state.currentStudent;
+
+    sel.onchange = ()=>{
+      state.currentStudent = sel.value;
+      renderPhotoPreview();
+      saveData();
+    };
+  }
+
+  function bindAddStudent(){
+    const btn = document.getElementById("btnAddStudent");
+    const inp = document.getElementById("newStudentName");
+
+    btn.onclick = ()=>{
+      const name = (inp.value || "").trim();
+      if(!name) return alert("児童名を入力してください。");
+      if(state.data.students.includes(name)) return alert("同名の児童がすでにいます。");
+
+      state.data.students.push(name);
+      state.currentStudent = name;
+      inp.value = "";
+      saveData();
+      renderStudentSelect();
+      renderPhotoPreview();
+    };
+
+    inp.onkeydown = (e)=>{
+      if(e.key === "Enter") btn.click();
+    };
+  }
+
+  // ===== Photo save (1 per student) =====
+  function bindPhoto(){
+    const input = document.getElementById("photoInput");
+    const btnClear = document.getElementById("btnClearPhoto");
+
+    input.onchange = async ()=>{
+      const file = input.files && input.files[0];
+      if(!file) return;
+
+      // 画像をDataURL化 → localStorageに保存
+      const dataUrl = await readAsDataURL(file);
+
+      // 容量対策（最小版）：横 1280px まで縮小して保存（iPadでも十分）
+      const resized = await resizeDataURL(dataUrl, 1280);
+
+      state.data.photosByStudent[state.currentStudent] = resized;
+      saveData();
+      renderPhotoPreview();
+
+      // 同じ画像をもう一度選べるようにリセット
+      input.value = "";
+    };
+
+    btnClear.onclick = ()=>{
+      if(!confirm("この児童の画像を削除しますか？")) return;
+      delete state.data.photosByStudent[state.currentStudent];
+      saveData();
+      renderPhotoPreview();
+    };
+  }
+
+  function renderPhotoPreview(){
+    const img = document.getElementById("photoPreview");
+    const url = state.data.photosByStudent[state.currentStudent];
+
+    if(url){
+      img.src = url;
+      img.style.display = "block";
+    }else{
+      img.removeAttribute("src");
+      img.style.display = "none";
+    }
+  }
+
+  function readAsDataURL(file){
+    return new Promise((resolve, reject)=>{
+      const r = new FileReader();
+      r.onload = ()=> resolve(String(r.result || ""));
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  // 画像縮小（容量節約）
+  function resizeDataURL(dataUrl, maxW){
+    return new Promise((resolve)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const w = img.width;
+        const h = img.height;
+        const scale = Math.min(1, maxW / w);
+        const nw = Math.round(w * scale);
+        const nh = Math.round(h * scale);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = nw;
+        canvas.height = nh;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, nw, nh);
+
+        // JPEGで保存（容量が小さくなりやすい）
+        const out = canvas.toDataURL("image/jpeg", 0.82);
+        resolve(out);
+      };
+      img.onerror = ()=> resolve(dataUrl); // 失敗時はそのまま
+      img.src = dataUrl;
+    });
+  }
+
+  // ===== init =====
+  document.addEventListener("DOMContentLoaded", ()=>{
+    // theme init
+    applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+    const tbtn = document.getElementById("btnTheme");
+    if(tbtn) tbtn.addEventListener("click", toggleTheme);
+
+    // app init
+    state.currentStudent = state.data.students[0];
+    renderStudentSelect();
+    bindAddStudent();
+    bindPhoto();
+    renderPhotoPreview();
   });
 </script>
 </body>
