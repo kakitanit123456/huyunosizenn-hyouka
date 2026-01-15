@@ -24,9 +24,9 @@
 
     header{
       position:sticky; top:0; z-index:50;
-      background:rgba(10,11,16,.92);
-      backdrop-filter:blur(10px);
-      border-bottom:1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
     }
 
     .wrap{max-width:1250px;margin:0 auto;padding:14px 14px 22px}
@@ -142,6 +142,13 @@ html[data-theme="light"] .btn{
   background:#ffffff !important;
   color:#0c1220 !important;
   border-color:#d9e0ea !important;
+}
+html[data-theme="light"] header,
+html[data-theme="light"] header *{
+  background-color: transparent;
+}
+html[data-theme="light"] header{
+  background: rgba(255,255,255,.92) !important;
 }
   </style>
 </head>
