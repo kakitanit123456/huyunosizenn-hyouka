@@ -75,6 +75,30 @@
       position:relative;
       z-index:9990;
     }
+    /* ===== Header overlap fix (iPad横での“かぶさり”対策) ===== */
+.headerBar{
+  justify-content: space-between;
+  flex-wrap: wrap;        /* 狭いときは折り返す */
+  align-items: flex-start;
+}
+
+.headerLeft{
+  flex: 1 1 auto;
+  min-width: 0;           /* これが超重要：左の要素が右にかぶるのを防ぐ */
+}
+
+.headerLeft h1{
+  overflow-wrap: anywhere; /* 長いタイトルでもかぶらない */
+}
+
+.headerActions{
+  flex: 0 0 auto;          /* 右のボタン群は縮めない */
+  z-index: 10000;
+}
+
+#btnTheme{
+  z-index: 10001;
+}
   </style>
 </head>
 
@@ -82,21 +106,19 @@
 <header>
   <div class="wrap">
     <div class="row" style="justify-content:space-between">
-      <div>
-        <h1>4年理科 評価記録ツール（冬の自然探究プロジェクト）</h1>
-        <div class="sub">Part1：土台（ボタンが押せるか／表示確認）</div>
-      </div>
+      <div class="row headerBar">
+  <div class="headerLeft">
+    <h1>4年理科 評価記録ツール（冬の自然探究プロジェクト）</h1>
+    <div class="sub">Part1：土台（ボタンが押せるか／表示確認）</div>
+  </div>
 
-      <!-- 右上ボタン群 -->
-      <div class="row" style="justify-content:flex-end">
-        <!-- ★ まずはここが押せるか確認する（アラートが出ればOK） -->
-        <button class="btn" id="btnTheme" onclick="alert('theme clicked')">☀️/🌙</button>
-
-        <button class="btn" id="btnExport" onclick="alert('export clicked')">エクスポート</button>
-        <button class="btn" id="btnImport" onclick="alert('import clicked')">インポート</button>
-        <button class="btn" id="btnReset" onclick="alert('reset clicked')">全データ削除</button>
-      </div>
-    </div>
+  <div class="row headerActions">
+    <button class="btn" id="btnTheme" onclick="alert('theme clicked')">☀️/🌙</button>
+    <button class="btn" id="btnExport" onclick="alert('export clicked')">エクスポート</button>
+    <button class="btn" id="btnImport" onclick="alert('import clicked')">インポート</button>
+    <button class="btn" id="btnReset" onclick="alert('reset clicked')">全データ削除</button>
+  </div>
+</div>
   </div>
 </header>
 
