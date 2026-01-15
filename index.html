@@ -342,11 +342,6 @@ html[data-theme="light"] header{
   
 function getGroupMembers(studentName){
   const g = state.data.studentGroup?.[studentName] || "";
-  if(!g) return [studentName]; // 未設定なら自分だけ
-  return state.data.students.filter(n => (state.data.studentGroup?.[n] || "") === g);
-}
-  function getGroupMembers(studentName){
-  const g = state.data.studentGroup?.[studentName] || "";
   if(!g) return [studentName];
   return state.data.students.filter(n => (state.data.studentGroup?.[n] || "") === g);
 }
@@ -366,14 +361,13 @@ function syncProgressToGroup(fromStudent){
     state.data.progressByStudent[m] = {
       plan: src.plan || "",
       status: src.status || "",
-      note: prev.note || "" // noteは同期しない（保持）
+      note: prev.note || ""   // noteは同期しない（保持）
     };
   });
 
   saveData();
 }
 
-// ===== 同期テストUI（表示・入力） =====
 function renderSyncTestUI(){
   const toggle = document.getElementById("syncToggle");
   const input  = document.getElementById("planInput");
@@ -386,6 +380,7 @@ function renderSyncTestUI(){
     state.data.progressByStudent[state.currentStudent] = { plan:"", status:"", note:"" };
   }
 
+  // 入力欄に現在値を反映
   input.value  = state.data.progressByStudent[state.currentStudent].plan || "";
   status.value = state.data.progressByStudent[state.currentStudent].status || "";
 
@@ -405,11 +400,17 @@ function bindSyncTest(){
   const SYNC_KEY = "rika4_sync_enabled_v1";
   toggle.checked = (localStorage.getItem(SYNC_KEY) === "1");
 
+  toggle.onchange = ()=>{
+    localStorage.setItem(SYNC_KEY, toggle.checked ? "1" : "0");
+    renderSyncTestUI();
+  };
+
   const ensureRow = ()=>{
     state.data.progressByStudent = state.data.progressByStudent || {};
     if(!state.data.progressByStudent[state.currentStudent]){
       state.data.progressByStudent[state.currentStudent] = { plan:"", status:"", note:"" };
     }
+  };
 
   const saveAndMaybeSync = ()=>{
     saveData();
@@ -419,16 +420,20 @@ function bindSyncTest(){
     renderSyncTestUI();
   };
 
-  toggle.onchange = ()=>{
-    localStorage.setItem(SYNC_KEY, toggle.checked ? "1" : "0");
-    renderSyncTestUI();
-  };
-
+  // 計画
   input.oninput = ()=>{
     ensureRow();
     state.data.progressByStudent[state.currentStudent].plan = input.value;
     saveAndMaybeSync();
   };
+
+  // 進捗
+  status.onchange = ()=>{
+    ensureRow();
+    state.data.progressByStudent[state.currentStudent].status = status.value;
+    saveAndMaybeSync();
+  };
+}
 
   status.onchange = ()=>{
     ensureRow();
