@@ -438,16 +438,6 @@ function bindSyncTest(){
     saveAndMaybeSync();
   };
 }
-
-    state.data.progressByStudent[state.currentStudent].plan = input.value;
-    saveData();
-
-    if(toggle.checked){
-      syncProgressToGroup(state.currentStudent);
-    }
-    renderSyncTestUI();
-  };
-}
   // ===== UI: student select =====
   function renderStudentSelect(){
     const sel = document.getElementById("studentSelect");
