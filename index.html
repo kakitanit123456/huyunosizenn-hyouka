@@ -190,6 +190,24 @@ html[data-theme="light"] header{
     <div class="row">
       <input id="newStudentName" class="grow" placeholder="追加する児童名（例：山田 太郎）" />
     </div>
+    <div class="hr"></div>
+
+<div class="sec-title">
+  <h2>グループ設定（2・2・3）</h2>
+  <span class="hint">G1/G2/G3（未設定も可）</span>
+</div>
+
+<div class="row">
+  <select id="groupSelect" class="grow">
+    <option value="">（未設定）</option>
+    <option value="G1">G1（2人）</option>
+    <option value="G2">G2（2人）</option>
+    <option value="G3">G3（3人）</option>
+  </select>
+  <button class="btn" id="btnAutoGroup" type="button">自動(2・2・3)</button>
+</div>
+
+<div class="small" id="groupCount" style="margin-top:6px"></div>
 <div class="sub" style="margin-top:10px; font-weight:700">グループ設定（2・2・3）</div>
 
 <div class="row">
