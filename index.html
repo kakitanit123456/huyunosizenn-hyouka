@@ -208,19 +208,7 @@ html[data-theme="light"] header{
 </div>
 
 <div class="small" id="groupCount" style="margin-top:6px"></div>
-<div class="sub" style="margin-top:10px; font-weight:700">グループ設定（2・2・3）</div>
-
-<div class="row">
-  <select id="groupSelect" class="grow">
-    <option value="">（未設定）</option>
-    <option value="G1">G1（2人）</option>
-    <option value="G2">G2（2人）</option>
-    <option value="G3">G3（3人）</option>
-  </select>
-  <button class="btn" id="btnAutoGroup" type="button">自動(2・2・3)</button>
-</div>
-
-<div class="sub" id="groupCount" style="margin-top:6px"></div>
+    
     <div class="sub" style="margin-top:10px">
       ※ Part2 以降で「本当に追加できる」ようにします。
     </div>
@@ -387,17 +375,6 @@ function autoAssignGroups223(){
       renderStudentSelect();
       renderGroupUI();
       renderPhotoPreview();
-      // グループUI初期表示
-renderGroupUI();
-
-// 自動割り当てボタン
-const autoBtn = document.getElementById("btnAutoGroup");
-if(autoBtn){
-  autoBtn.onclick = ()=>{
-    if(!confirm("児童順に 2・2・3（G1,G2,G3）で自動割り当てしますか？")) return;
-    autoAssignGroups223();
-  };
-}
     };
 
     inp.onkeydown = (e)=>{
@@ -497,6 +474,17 @@ if(autoBtn){
     bindAddStudent();
     bindPhoto();
     renderPhotoPreview();
+    // グループUI初期表示
+renderGroupUI();
+
+// 自動割り当てボタン（最初から有効にする）
+const autoBtn = document.getElementById("btnAutoGroup");
+if(autoBtn){
+  autoBtn.onclick = ()=>{
+    if(!confirm("児童順に 2・2・3（G1,G2,G3）で自動割り当てしますか？")) return;
+    autoAssignGroups223();
+  };
+}
   });
 </script>
 </body>
