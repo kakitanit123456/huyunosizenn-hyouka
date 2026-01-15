@@ -238,7 +238,13 @@ html[data-theme="light"] header{
 
   <div class="sub" style="margin-top:8px">計画メモ：</div>
   <input id="planInput" placeholder="例：観察カード／写真／発表準備 など" />
-
+  <div class="sub" style="margin-top:8px">進捗：</div>
+<select id="statusSelect">
+  <option value="">（未設定）</option>
+  <option value="未">未</option>
+  <option value="途中">途中</option>
+  <option value="完了">完了</option>
+</select>
   <div class="sub" id="syncInfo" style="margin-top:8px"></div>
 </div>
       <div class="card" style="margin-top:12px">
@@ -289,10 +295,10 @@ html[data-theme="light"] header{
   // ===== Data (students + 1 photo per student) =====
   const defaultData = {
     students: ["（児童1）"],
-    studentGroup: {}, 
-    photosByStudent: {}, 
-    plansByStudent: {}, 
-    progressByStudent: {} // ← 同期対象のデータ
+    studentGroup: {},
+    photosByStudent: {},
+    plansByStudent: {},
+    progressByStudent: {} // ← ここは必ず空オブジェクト
   };
 
   function loadData(){
@@ -309,11 +315,16 @@ html[data-theme="light"] header{
       if(d.studentGroup[n] == null) d.studentGroup[n] = "";
       if(d.progressByStudent[n] == null){
         d.progressByStudent[n] = {
-        plan: "",   // 計画（例：この時間にやること）
-        done: "",   // 実績
-        note: ""    // 教師メモ
-      };
-    }
+        plan: "",     // 同期する
+        status: "",   // 同期する（未/途中/完了）
+        note: ""      // 同期しない（教師メモ用に残すなら）
+        };
+      } else {
+  // 既存データが古い形（done）だった場合の救済
+        if(d.progressByStudent[n].status == null) d.progressByStudent[n].status = d.progressByStudent[n].done || "";
+        if(d.progressByStudent[n].plan == null) d.progressByStudent[n].plan = "";
+        if(d.progressByStudent[n].note == null) d.progressByStudent[n].note = "";
+      }
       if(d.plansByStudent[n] == null) d.plansByStudent[n] = "";
       });
       if(d.students.length === 0) d.students = structuredClone(defaultData.students);
@@ -343,17 +354,19 @@ function getGroupMembers(studentName){
   // 念のため保険
   state.data.progressByStudent = state.data.progressByStudent || {};
   if(!state.data.progressByStudent[fromStudent]){
-    state.data.progressByStudent[fromStudent] = { plan:"", done:"", note:"" };
+    state.data.progressByStudent[fromStudent] = { plan:"", status:"", note:"" };
   }
 
   const src = state.data.progressByStudent[fromStudent];
 
   members.forEach(m=>{
-    state.data.progressByStudent[m] = {
-      plan: src.plan || "",
-      done: src.done || "",
-      note: src.note || ""
-    };
+    // ※ note は同期しない
+const prev = state.data.progressByStudent[m] || {};
+state.data.progressByStudent[m] = {
+  plan: src.plan || "",
+  status: src.status || "",
+  note: prev.note || "" // その子のメモは保持
+};
   });
 
   saveData();
@@ -363,14 +376,27 @@ function getGroupMembers(studentName){
 function renderSyncTestUI(){
   const toggle = document.getElementById("syncToggle");
   const input  = document.getElementById("planInput");
+  const status = document.getElementById("statusSelect");
   const info   = document.getElementById("syncInfo");
-  if(!toggle || !input || !info) return;
+  if(!toggle || !input || !status || !info) return;
 
   // 児童のprogressが無い場合は保険で作る
   state.data.progressByStudent = state.data.progressByStudent || {};
   if(!state.data.progressByStudent[state.currentStudent]){
-    state.data.progressByStudent[state.currentStudent] = { plan:"", done:"", note:"" };
+    state.data.progressByStudent[state.currentStudent] = { plan:"", status:"", note:"" };
   }
+
+  // 入力欄に現在値を反映
+  input.value  = state.data.progressByStudent[state.currentStudent].plan || "";
+  status.value = state.data.progressByStudent[state.currentStudent].status || "";
+
+  // 表示メッセージ
+  const members = getGroupMembers(state.currentStudent);
+  const g = state.data.studentGroup?.[state.currentStudent] || "";
+  info.textContent = g
+    ? `対象グループ：${g}（同期先 ${members.length}人）`
+    : `グループ未設定：この児童だけ（同期なし）`;
+}
 
   // 入力欄に現在値を反映
   input.value = state.data.progressByStudent[state.currentStudent].plan || "";
@@ -386,9 +412,9 @@ function renderSyncTestUI(){
 function bindSyncTest(){
   const toggle = document.getElementById("syncToggle");
   const input  = document.getElementById("planInput");
-  if(!toggle || !input) return;
+  const status = document.getElementById("statusSelect");
+  if(!toggle || !input || !status) return;
 
-  // 同期ON/OFFを保存（端末内）
   const SYNC_KEY = "rika4_sync_enabled_v1";
   toggle.checked = (localStorage.getItem(SYNC_KEY) === "1");
 
@@ -396,6 +422,37 @@ function bindSyncTest(){
     localStorage.setItem(SYNC_KEY, toggle.checked ? "1" : "0");
     renderSyncTestUI();
   };
+
+  const ensureRow = ()=>{
+    state.data.progressByStudent = state.data.progressByStudent || {};
+    if(!state.data.progressByStudent[state.currentStudent]){
+      state.data.progressByStudent[state.currentStudent] = { plan:"", status:"", note:"" };
+    }
+  };
+
+  const saveAndMaybeSync = ()=>{
+    ensureRow();
+    saveData();
+    if(toggle.checked){
+      syncProgressToGroup(state.currentStudent);
+    }
+    renderSyncTestUI();
+  };
+
+  // 計画
+  input.oninput = ()=>{
+    ensureRow();
+    state.data.progressByStudent[state.currentStudent].plan = input.value;
+    saveAndMaybeSync();
+  };
+
+  // 進捗
+  status.onchange = ()=>{
+    ensureRow();
+    state.data.progressByStudent[state.currentStudent].status = status.value;
+    saveAndMaybeSync();
+  };
+}
 
   // 入力→保存（必要なら同期）
   input.oninput = ()=>{
