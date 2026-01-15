@@ -339,6 +339,13 @@ function getGroupMembers(studentName){
 }
   function syncProgressToGroup(fromStudent){
   const members = getGroupMembers(fromStudent);
+
+  // 念のため保険
+  state.data.progressByStudent = state.data.progressByStudent || {};
+  if(!state.data.progressByStudent[fromStudent]){
+    state.data.progressByStudent[fromStudent] = { plan:"", done:"", note:"" };
+  }
+
   const src = state.data.progressByStudent[fromStudent];
 
   members.forEach(m=>{
@@ -348,6 +355,11 @@ function getGroupMembers(studentName){
       note: src.note || ""
     };
   });
+
+  saveData();
+}
+
+// ===== 同期テストUI（表示・入力） =====
 function renderSyncTestUI(){
   const toggle = document.getElementById("syncToggle");
   const input  = document.getElementById("planInput");
@@ -370,7 +382,8 @@ function renderSyncTestUI(){
     ? `対象グループ：${g}（同期先 ${members.length}人）`
     : `グループ未設定：この児童だけ（同期なし）`;
 }
-  function bindSyncTest(){
+
+function bindSyncTest(){
   const toggle = document.getElementById("syncToggle");
   const input  = document.getElementById("planInput");
   if(!toggle || !input) return;
@@ -399,8 +412,6 @@ function renderSyncTestUI(){
     }
     renderSyncTestUI();
   };
-}
-  saveData();
 }
   // ===== UI: student select =====
   function renderStudentSelect(){
